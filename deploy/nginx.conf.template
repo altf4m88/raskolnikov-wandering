@@ -1,0 +1,43 @@
+# Serves the single generated page. The Docker build fills in __CSP__ (it pins the page's
+# inline script by hash); the nginx image substitutes ${PORT} at container start, which is
+# how Cloud Run tells the container where to listen. Only variables that are set in the
+# environment are substituted, so nginx's own $variables are left alone.
+server {
+    listen       ${PORT};
+    server_name  _;
+    server_tokens off;
+    root         /usr/share/nginx/html;
+
+    # index.html.gz is pre-compressed at build time; gzip on the fly is only a fallback
+    gzip_static     on;
+    gzip            on;
+    gzip_vary       on;
+    gzip_min_length 1024;
+    gzip_types      text/plain text/css application/javascript application/json image/svg+xml;
+
+    # set once here; locations below use `expires` instead of add_header so these are inherited
+    add_header Content-Security-Policy   "__CSP__" always;
+    add_header X-Content-Type-Options    "nosniff" always;
+    add_header Referrer-Policy           "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy        "camera=(), microphone=(), geolocation=()" always;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    location = / {
+        try_files /index.html =404;
+        expires -1;  # Cache-Control: no-cache; browsers revalidate with the ETag
+    }
+
+    location = /index.html {
+        expires -1;
+    }
+
+    location = /healthz {
+        access_log   off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location / {
+        return 404;
+    }
+}

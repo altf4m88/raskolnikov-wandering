@@ -1,0 +1,1159 @@
+<title>Raskolnikov Wandering</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=PT+Mono&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one full-bleed 3D model of the Haymarket district; masthead top-left, scene card right
+   (bottom sheet on phones), a fourteen-day timeline docked along the bottom edge.
+   One deliberate look in every theme: summer-1865 "Petersburg yellow" paper and sepia ink.
+   The 3D sky changes with each scene's clock time. */
+:root {
+  --paper: #ECDFB8;
+  --paper-2: #E2D2A2;
+  --paper-glass: rgba(236, 223, 184, 0.93);
+  --ink: #22180E;
+  --ink-2: #5A4930;
+  --ink-3: #87734F;
+  --rule: rgba(34, 24, 14, 0.16);
+  --ochre: #B8871C;
+  --ochre-soft: #E6C66A;
+  --blood: #8A2A1C;
+  --slate: #34556B;
+  --lucid: #8E9A78;
+  --fever: #C99A2E;
+  --delir: #8A2A1C;
+  --display: "Old Standard TT", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "PT Serif", Georgia, "Times New Roman", serif;
+  --mono: "PT Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --tl-h: 118px;
+  --panel-w: 392px;
+  color-scheme: light;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; overflow: hidden; -webkit-font-smoothing: antialiased; }
+#app { position: fixed; inset: 0; overflow: hidden; background: #c9b98f; }
+#scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+
+/* ---------- masthead ---------- */
+.mast { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); left: var(--gutter-l); max-width: min(520px, calc(100% - var(--panel-w) - 64px)); pointer-events: none; }
+.mast h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(26px, 3.2vw, 40px); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; color: var(--ink); text-shadow: 0 1px 0 rgba(236,223,184,.7), 0 0 18px rgba(236,223,184,.85); }
+.mast h1 i { font-style: italic; color: var(--blood); }
+.mast .ru { font-family: var(--body); font-style: italic; font-size: 13.5px; color: var(--ink-2); margin-top: 4px; text-shadow: 0 0 10px rgba(236,223,184,.9); }
+.readout { margin-top: 10px; display: inline-flex; flex-wrap: wrap; gap: 0; font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: var(--ink); background: var(--paper-glass); border: 1px solid var(--rule); border-radius: 2px; pointer-events: auto; }
+.readout span { padding: 4px 9px; border-right: 1px solid var(--rule); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.readout span:last-child { border-right: 0; }
+.readout .sun { color: var(--ink-2); }
+
+/* ---------- tools ---------- */
+#tools { position: absolute; left: var(--gutter-l); bottom: calc(var(--tl-h) + 14px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; flex-wrap: wrap; max-width: calc(100% - var(--panel-w) - 64px); }
+.tbtn { font: 12px/1 var(--mono); letter-spacing: .03em; color: var(--ink); background: var(--paper-glass); border: 1px solid var(--rule); border-radius: 2px; padding: 7px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.tbtn:hover { border-color: var(--ink-3); }
+.tbtn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.tbtn .sw { width: 14px; height: 3px; display: inline-block; background: currentColor; }
+.tbtn.svid .sw { background: repeating-linear-gradient(90deg, var(--slate) 0 4px, transparent 4px 7px); height: 3px; }
+.tbtn.svid[aria-pressed="true"] .sw { background: repeating-linear-gradient(90deg, #b9d0df 0 4px, transparent 4px 7px); }
+:focus-visible { outline: 2px solid var(--blood); outline-offset: 2px; }
+
+/* ---------- scene card ---------- */
+#panel { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: var(--gutter-r); width: var(--panel-w); bottom: calc(var(--tl-h) + 26px + env(safe-area-inset-bottom, 0px)); background: var(--paper-glass); border: 1px solid var(--rule); box-shadow: 0 10px 40px -18px rgba(34,24,14,.55); display: flex; flex-direction: column; min-height: 0; }
+#panel .scroll { overflow-y: auto; padding: 18px 22px 22px; min-height: 0; flex: 1; overscroll-behavior: contain; }
+.handle { display: none; }
+.prog { height: 3px; background: rgba(34,24,14,.08); flex: none; }
+.prog i { display: block; height: 100%; width: 0; background: var(--blood); }
+.eyebrow { font: 11.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.eyebrow b { font-weight: 400; color: var(--blood); }
+#ev-title { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.08; margin: 8px 0 10px; text-wrap: balance; }
+.place { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.place .pn { font-family: var(--display); font-size: 17px; line-height: 1.2; min-width: 0; }
+.place .pr { font-style: italic; color: var(--ink-2); font-size: 13.5px; grid-column: 1; }
+.place .pa { font: 11.5px/1.4 var(--mono); color: var(--ink-3); grid-column: 1 / -1; }
+.chip { font: 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 7px 3px; border-radius: 2px; white-space: nowrap; grid-row: 1; grid-column: 2; align-self: start; }
+.chip.textual { background: var(--ink); color: var(--paper); }
+.chip.traditional { background: var(--ochre); color: var(--ink); }
+.chip.conjectural { border: 1px dashed var(--ink-2); color: var(--ink-2); }
+#ev-sum { margin: 12px 0 0; }
+blockquote { margin: 16px 0 0; padding: 2px 0 2px 16px; border-left: 3px solid var(--ochre); font-style: italic; font-size: 16.5px; line-height: 1.45; color: var(--ink); }
+blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
+.qref { font: 11.5px/1.4 var(--mono); color: var(--ink-3); margin: 6px 0 0 19px; }
+.note { margin-top: 14px; padding: 10px 12px; background: rgba(184,135,28,.12); border: 1px solid rgba(184,135,28,.35); font-size: 14px; }
+.note h3, .measure h3, .facts h3 { margin: 0 0 4px; font: 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); font-weight: 400; }
+.note.tn { background: rgba(138,42,28,.07); border-color: rgba(138,42,28,.28); }
+.measure { margin-top: 14px; padding: 12px; border: 1px solid var(--ink); background: rgba(255,255,255,.18); }
+.bars { display: grid; gap: 7px; margin-top: 8px; }
+.bar { display: grid; grid-template-columns: 1fr; gap: 3px; font: 12px/1.3 var(--mono); }
+.bar .track { height: 8px; background: rgba(34,24,14,.08); position: relative; }
+.bar .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); }
+.bar.text .fill { background: var(--ochre); }
+.bar.alt .fill { background: var(--ink-3); }
+.measure p { margin: 8px 0 0; font-size: 13.5px; }
+.facts { margin-top: 14px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13.5px; }
+.facts dt { font: 11px/1.5 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.facts dd { margin: 0; min-width: 0; }
+.pnote { margin-top: 12px; font-size: 13.5px; color: var(--ink-2); }
+.nav2 { display: flex; gap: 8px; padding: 10px 22px 14px; border-top: 1px solid var(--rule); }
+.nav2 button { flex: 1; }
+
+/* ---------- timeline ---------- */
+#timeline { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px var(--gutter-r) calc(10px + env(safe-area-inset-bottom, 0px)) var(--gutter-l); background: linear-gradient(to top, rgba(236,223,184,.97) 70%, rgba(236,223,184,0)); display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: end; }
+.transport { display: flex; gap: 6px; align-items: center; padding-bottom: 22px; }
+.ibtn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.ibtn.play { width: 46px; height: 46px; background: var(--ink); color: var(--paper); }
+.ibtn svg { width: 16px; height: 16px; fill: currentColor; }
+.speed { font: 12px var(--mono); border: 1px solid var(--rule); background: var(--paper); padding: 6px 8px; border-radius: 2px; cursor: pointer; color: var(--ink); min-width: 42px; }
+.days-wrap { overflow-x: auto; overflow-y: hidden; min-width: 0; scrollbar-width: thin; padding-bottom: 2px; }
+.days { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(64px, 1fr); gap: 3px; min-width: 760px; }
+.day { display: grid; grid-template-rows: auto 30px 6px; gap: 3px; cursor: default; }
+.day .dl { font: 11px/1.2 var(--mono); letter-spacing: .04em; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.day .dl b { font-weight: 400; color: var(--ink); }
+.day.cur .dl b { color: var(--blood); }
+.track { position: relative; background: rgba(34,24,14,.06); border-top: 1px solid var(--rule); }
+.day.cur .track { background: rgba(184,135,28,.16); }
+.track::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dotted rgba(34,24,14,.18); }
+.tick { position: absolute; top: 3px; width: 14px; height: 22px; margin-left: -7px; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.tick::after { content: ""; position: absolute; left: 6px; top: 2px; width: 2px; height: 18px; background: var(--ink); transition: transform .15s; }
+.tick.S::after { background: var(--slate); }
+.tick.walk::after { width: 3px; left: 5px; }
+.tick:hover::after { transform: scaleY(1.15); background: var(--blood); }
+.tick.on::after { background: var(--blood); width: 4px; left: 5px; top: -2px; height: 26px; box-shadow: 0 0 0 2px var(--paper); }
+.tick.past::after { opacity: .45; }
+.band { position: relative; height: 6px; background: rgba(34,24,14,.05); }
+.band i { position: absolute; top: 0; bottom: 0; }
+.tl-legend { grid-column: 2; display: flex; gap: 14px; font: 10.5px/1 var(--mono); color: var(--ink-3); letter-spacing: .05em; flex-wrap: wrap; margin-top: -6px; }
+.tl-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.tl-legend i { width: 14px; height: 6px; display: inline-block; }
+#tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: var(--paper); font: 12px/1.3 var(--body); padding: 5px 8px; border-radius: 2px; transform: translate(-50%, -100%); white-space: nowrap; }
+
+/* ---------- labels ---------- */
+.lbl { position: absolute; left: 0; top: 0; transform-origin: 0 100%; white-space: nowrap; will-change: transform; }
+.lbl .in { transform: translate(-50%, -100%); display: grid; justify-items: center; padding-bottom: 6px; }
+.lbl .n { font: 13px/1.15 var(--display); color: var(--ink); background: rgba(236,223,184,.86); padding: 2px 6px 1px; border: 1px solid var(--rule); }
+.lbl .r { font: italic 11px/1.2 var(--body); color: var(--ink-2); text-shadow: 0 0 6px rgba(236,223,184,1), 0 0 2px rgba(236,223,184,1); margin-top: 1px; }
+.lbl.cur .n { background: var(--ink); color: var(--paper); border-color: var(--ink); font-size: 15px; }
+.lbl.conj .n { border-style: dashed; }
+.lbl.lm .n { background: transparent; border: 0; font-style: italic; font-size: 12px; color: var(--ink-2); text-shadow: 0 0 6px rgba(236,223,184,1), 0 0 3px rgba(236,223,184,1); }
+.lbl.night .n { background: rgba(28,30,44,.78); color: #efe3c0; border-color: rgba(239,227,192,.25); }
+.lbl.night .r, .lbl.lm.night .n { color: #d9cfb4; text-shadow: 0 0 6px rgba(20,22,34,1); }
+.lbl.cur.night .n { background: #efe3c0; color: var(--ink); }
+
+/* ---------- siberia card ---------- */
+#siberia { position: absolute; right: calc(var(--panel-w) + 32px + env(safe-area-inset-right, 0px)); top: 42%; max-width: 280px; background: var(--paper-glass); border: 1px solid var(--ink); padding: 14px 16px; font-size: 14px; }
+#siberia h2 { margin: 0 0 4px; font: 400 26px/1.05 var(--display); }
+#siberia .arrow { font: 12px var(--mono); color: var(--blood); letter-spacing: .08em; text-transform: uppercase; }
+
+/* ---------- about ---------- */
+#about { position: absolute; inset: 0; background: rgba(34,24,14,.45); display: grid; place-items: center; padding: 16px var(--gutter-r) 16px var(--gutter-l); z-index: 20; }
+#about .sheet { background: var(--paper); max-width: 760px; width: 100%; max-height: 100%; overflow-y: auto; padding: 26px 30px; border: 1px solid var(--ink); position: relative; }
+#about h2 { font: 400 32px/1.05 var(--display); margin: 0 0 6px; }
+#about h3 { font: 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--blood); margin: 22px 0 6px; font-weight: 400; }
+#about p, #about li { max-width: 65ch; }
+#about ul { padding-left: 18px; margin: 6px 0; }
+#about li { margin: 4px 0; }
+#about .close { position: absolute; top: 14px; right: 14px; }
+#about a { color: var(--blood); }
+.legend-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 6px 0; }
+
+/* ---------- loading ---------- */
+#loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--paper); z-index: 30; text-align: center; padding: 16px; }
+#loading h2 { font: 400 34px/1.05 var(--display); margin: 0 0 8px; }
+#loading p { font: 13px var(--mono); color: var(--ink-2); margin: 0; }
+#loading.err p { color: var(--blood); }
+
+/* ---------- phone ---------- */
+@media (max-width: 760px) {
+  :root { --tl-h: 128px; }
+  .mast { max-width: calc(100% - 32px); }
+  .mast h1 { font-size: 24px; }
+  .mast .ru { display: none; }
+  .readout { font-size: 11px; margin-top: 6px; }
+  .readout span { padding: 3px 6px; }
+  #tools { top: auto; right: var(--gutter-r); left: var(--gutter-l); bottom: calc(var(--tl-h) + 12px + env(safe-area-inset-bottom, 0px) + var(--sheet-h, 190px)); justify-content: flex-start; max-width: none; }
+  .tbtn { padding: 6px 8px; font-size: 11px; }
+  #panel { top: auto; left: 0; right: 0; width: auto; bottom: calc(var(--tl-h) + 6px + env(safe-area-inset-bottom, 0px)); height: var(--sheet-h, 190px); border-left: 0; border-right: 0; }
+  #panel .scroll { padding: 4px var(--gutter-r) 14px var(--gutter-l); }
+  .handle { display: block; width: 100%; height: 22px; border: 0; background: transparent; cursor: pointer; position: relative; flex: none; }
+  .handle::before { content: ""; position: absolute; left: 50%; top: 8px; width: 44px; height: 4px; margin-left: -22px; border-radius: 2px; background: var(--ink-3); }
+  #ev-title { font-size: 23px; margin: 4px 0 8px; }
+  .nav2 { display: none; }
+  #timeline { grid-template-columns: 1fr; gap: 6px; padding-top: 6px; background: var(--paper); border-top: 1px solid var(--rule); }
+  .transport { padding-bottom: 0; order: 2; justify-content: center; }
+  .days-wrap { order: 1; }
+  .tl-legend { display: none; }
+  .ibtn { width: 34px; height: 34px; } .ibtn.play { width: 40px; height: 40px; }
+  #siberia { right: var(--gutter-r); left: var(--gutter-l); top: 18%; max-width: none; }
+  #about .sheet { padding: 22px 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .tick::after { transition: none; } }
+</style>
+<!--/head-->
+<div id="app">
+  <canvas id="scene" tabindex="0" aria-label="3D map of the Haymarket district of St Petersburg. Drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom."></canvas>
+  <div id="labels" aria-hidden="true"></div>
+
+  <header class="mast">
+    <h1>Raskolnikov <i>Wandering</i></h1>
+    <div class="ru">«Преступление и наказание» · the walks of Crime and Punishment, July 1865</div>
+    <div class="readout" id="readout" aria-live="polite"><span id="r-day">Day 1</span><span id="r-time">c. 19:00</span><span id="r-ch">Part I · ch. 1</span><span class="sun" id="r-sun">sun —</span></div>
+  </header>
+
+  <nav id="tools" aria-label="Map layers">
+    <button class="tbtn" id="t-all" aria-pressed="false" title="Show every walk in the novel, faintly"><span class="sw"></span>All walks</button>
+    <button class="tbtn svid" id="t-svid" aria-pressed="false" title="Add Svidrigailov's last night to the timeline"><span class="sw"></span>Svidrigailov's night</button>
+    <button class="tbtn" id="t-lbl" aria-pressed="true" title="Place names">Labels</button>
+    <button class="tbtn" id="t-about" aria-pressed="false">About this map</button>
+  </nav>
+
+  <aside id="panel" aria-label="Scene">
+    <div class="prog" id="prog" hidden title="Time left on this scene; playback waits long enough to read the card"><i id="prog-i"></i></div>
+    <button class="handle" id="handle" aria-label="Expand or collapse the scene card"></button>
+    <div class="scroll" id="panel-scroll">
+      <div class="eyebrow"><b id="ev-day">Day 1</b><span id="ev-dname"></span><span id="ev-clock"></span></div>
+      <h2 id="ev-title">Seven hundred and thirty paces</h2>
+      <div class="place" id="ev-place">
+        <span class="pn" id="pl-name"></span><span class="chip" id="pl-chip"></span>
+        <span class="pr" id="pl-ru"></span>
+        <span class="pa" id="pl-addr"></span>
+      </div>
+      <p id="ev-sum"></p>
+      <blockquote id="ev-q"></blockquote>
+      <div class="qref" id="ev-qref"></div>
+      <div id="ev-extra"></div>
+      <dl class="facts" id="ev-facts"></dl>
+      <p class="pnote" id="pl-note"></p>
+    </div>
+    <div class="nav2">
+      <button class="tbtn" id="p-prev">← Previous scene</button>
+      <button class="tbtn" id="p-next">Next scene →</button>
+    </div>
+  </aside>
+
+  <div id="siberia" hidden>
+    <div class="arrow">→ east, about 2,300 km</div>
+    <h2>Siberia</h2>
+    <div>"On the banks of a broad solitary river stands a town." The novel never names it. Readers think of Omsk on the Irtysh, where Dostoevsky did his own four years of hard labour.</div>
+  </div>
+
+  <footer id="timeline">
+    <div class="transport">
+      <button class="ibtn" id="b-prev" aria-label="Previous scene"><svg viewBox="0 0 16 16"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg></button>
+      <button class="ibtn play" id="b-play" aria-label="Play"><svg viewBox="0 0 16 16" id="i-play"><path d="M4 2l10 6-10 6z"/></svg></button>
+      <button class="ibtn" id="b-next" aria-label="Next scene"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
+      <button class="speed" id="b-speed" title="Playback speed. At 1× each scene stays up about as long as it takes to read.">1×</button>
+    </div>
+    <div class="days-wrap" id="days-wrap"><div class="days" id="days"></div></div>
+    <div class="tl-legend" aria-hidden="true">
+      <span><i style="background:var(--lucid)"></i>lucid</span>
+      <span><i style="background:var(--fever)"></i>feverish</span>
+      <span><i style="background:var(--delir)"></i>delirious</span>
+      <span>— my reading, not the text's · each day runs midnight to midnight</span>
+    </div>
+  </footer>
+  <div id="tip" hidden></div>
+
+  <div id="about" hidden role="dialog" aria-modal="true" aria-labelledby="about-h">
+    <div class="sheet">
+      <button class="tbtn close" id="about-close">Close</button>
+      <h2 id="about-h">About this map</h2>
+      <p>Raskolnikov's walks in <i>Crime and Punishment</i>, scene by scene, over today's street plan of St Petersburg. Every quotation is checked word for word against Constance Garnett's 1914 translation. Every placename is checked against the Russian.</p>
+
+      <h3>How to read it</h3>
+      <div class="legend-row"><span class="chip textual" style="position:static">textual</span> the novel names the place outright.</div>
+      <div class="legend-row"><span class="chip traditional" style="position:static">traditional</span> the novel hides it behind an initial ("S—— Lane", "K—— Bridge") and local tradition has filled in the address.</div>
+      <div class="legend-row"><span class="chip conjectural" style="position:static">conjectural</span> no address exists in the text or the tradition; the pin is my guess, and the card says what it rests on.</div>
+      <p>Solid lines are walks whose streets the text gives or forces. Dashed lines are routes I inferred as the shortest plausible walk between two scenes; the book usually says nothing about them. The fever band under the timeline is an editorial reading of his state of mind, not data.</p>
+
+      <h3>Chronology</h3>
+      <ul>
+        <li>The action covers about fourteen days. The novel has no day numbers, so I count from its own cues. Razumikhin says he has been ill "for the last four days". Part VI begins with "two or three days" of fog. Katerina Ivanovna's funeral, Porfiry's last visit and Svidrigailov's last night all fall on one day. Other reconstructions come out a day shorter or longer.</li>
+        <li>"Early in July" is Old Style. Russia used the Julian calendar, so by ours it is the second half of July. The sky in each scene is computed for that date at 59.93° N, in Petersburg local mean time, which is what clocks showed in 1865.</li>
+        <li>That makes Dostoevsky's light literary rather than exact. "Nearly eight o'clock, the sun was setting" (Part II) is more than an hour early; the sun set around 20:55 that week.</li>
+      </ul>
+
+      <h3>Where the map is uncertain</h3>
+      <ul>
+        <li>The base map is today's OpenStreetMap: present-day building footprints, capped at six storeys to suggest the 1860s skyline. Bridges built after 1865 (Palace, Trinity, Birzhevoy, Betancourt) are removed and the routing avoids them.</li>
+        <li>The garret (Grazhdanskaya 19 / Stolyarny 5) and the pawnbroker's flat (Srednyaya Podyacheskaya 15 / Canal 104) are traditional but still argued over. The police office has two traditions: Canal 67, used here, and Sadovaya 28.</li>
+        <li>Kozel's house, the tavern, Porfiry's "grey house", Potchinkov's, Bakaleyev's house number and Svidrigailov's watch-tower have no agreed address.</li>
+        <li><b>The 730 paces.</b> At an ordinary 0.71 m pace, 730 paces is about 520 m. The text sends him "towards K. bridge", and that route measures about 1.1 km. Even the shortest street route today is about 0.7 km. Either Raskolnikov took enormous strides, or the number is a novelist's exactness, not a surveyor's.</li>
+      </ul>
+
+      <h3>Garnett against the Russian</h3>
+      <ul>
+        <li>"S. Place": the Russian is <i>С—м переулке</i>, S—— <i>Lane</i>.</li>
+        <li>"walking along Vassilyevsky Prospect": the Russian is <i>через В—й проспект</i>, the V—— Prospect (Voznesensky), the road to the island.</li>
+        <li>"near the bridge to Vassilyevsky Ostrov": the Russian puts Razumikhin <i>on</i> the island, on the Little Neva embankment by the bridge.</li>
+        <li>"That's in Voskresensky": the Russian is <i>на Вознесенском</i>, Voznesensky Prospekt.</li>
+        <li>"Third Street in Vassilyevsky Island": the Russian is <i>в Третьей линии, на Малом проспекте</i>, the Third Line at Maly Prospekt.</li>
+        <li>Katerina Ivanovna's last cry, <i>«Уездили клячу!»</i> ("they've driven the nag to death"), becomes "I am done for", and the echo of the mare dream is lost.</li>
+      </ul>
+
+      <h3>Sources</h3>
+      <ul>
+        <li>F. M. Dostoevsky, <i>Crime and Punishment</i>, trans. Constance Garnett (1914), <a href="https://www.gutenberg.org/ebooks/2554" target="_blank" rel="noopener">Project Gutenberg #2554</a>. Russian text: <a href="https://ilibrary.ru/text/69/p.1/index.html" target="_blank" rel="noopener">ilibrary.ru</a>.</li>
+        <li>Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, ODbL.</li>
+        <li>Address traditions: <a href="https://peterburg2.ru/articles/marshrut-po-peterburgu-adresa-geroev-romana-prestuplenie-i-nakazanie-231759.html" target="_blank" rel="noopener">peterburg2.ru</a>, <a href="https://www.vokrugsveta.ru/articles/mesto-prestupleniya-i-nakazaniya-izmenit-nelzya-gde-snimali-novyi-serial-po-romanu-fedora-dostoevskogo-id5955567/" target="_blank" rel="noopener">Vokrug Sveta</a>, and the KudaGo Dostoevsky list. All are popular guides; none is a critical edition.</li>
+        <li>Rendering: three.js r147.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="loading"><div><h2>Raskolnikov Wandering</h2><p id="load-msg">Laying out the Haymarket district…</p></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/lines/LineSegmentsGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/lines/LineGeometry.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/lines/LineMaterial.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/lines/LineSegments2.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/lines/Line2.js"></script>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+var loadMsg = $('load-msg');
+if (!window.THREE || !THREE.MapControls || !THREE.Line2) {
+  $('loading').classList.add('err');
+  loadMsg.textContent = 'The 3D library did not load. Check the connection and reload the page.';
+  return;
+}
+var DATA = JSON.parse($('data').textContent);
+var M = DATA.map, S = DATA.story;
+var REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var PHONE = window.matchMedia && matchMedia('(max-width: 760px)').matches;
+
+// ---------- decoding ----------
+function ring(a) { var out = [], x = 0, y = 0; for (var i = 0; i < a.length; i += 2) { x += a[i]; y += a[i + 1]; out.push(x, y); } return out; }
+function area2(r) { var s = 0, n = r.length / 2; for (var i = 0; i < n; i++) { var j = (i + 1) % n; s += r[2 * i] * r[2 * j + 1] - r[2 * j] * r[2 * i + 1]; } return s / 2; }
+function toV2(r) { var o = []; for (var i = 0; i < r.length; i += 2) o.push(new THREE.Vector2(r[i], r[i + 1])); return o; }
+
+// ---------- palette ----------
+var C = {
+  land: new THREE.Color('#d8c690'), granite: new THREE.Color('#8f7f73'), water: new THREE.Color('#5f776d'),
+  park: new THREE.Color('#9da36b'), bridge: new THREE.Color('#6f675e'), street: new THREE.Color('#efe4c4'),
+  ink: new THREE.Color('#22180e'), blood: new THREE.Color('#8a2a1c'), ochre: new THREE.Color('#b8871c'), slate: new THREE.Color('#34556b'),
+  gold: new THREE.Color('#d9a93a')
+};
+var FACADES = ['#d6b35c', '#dcbf73', '#e3cc8a', '#d9b766', '#e6d6aa', '#c99a72', '#cfa58a', '#b9b49a', '#a8b09a', '#e1c27a', '#d4b98c', '#c4ab7d'].map(function (h) { return new THREE.Color(h); });
+var ROOFS = ['#7e4635', '#8a5240', '#5f6a55', '#6d6a63', '#73493a', '#58604f'].map(function (h) { return new THREE.Color(h); });
+
+// ---------- renderer ----------
+var canvas = $('scene');
+var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, PHONE ? 1.5 : 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = !PHONE;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+var scene = new THREE.Scene();
+var fog = new THREE.Fog(0xd8cfa8, 1500, 6000);
+scene.fog = fog;
+var camera = new THREE.PerspectiveCamera(38, 1, 4, 30000);
+var controls = new THREE.MapControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.09;
+controls.screenSpacePanning = false; controls.maxPolarAngle = 1.32; controls.minDistance = 45; controls.maxDistance = 7500;
+controls.zoomSpeed = 0.9;
+
+// world: x east, z south, y up
+function W(x, y, h) { return new THREE.Vector3(x, h || 0, -y); }
+
+// ---------- sky ----------
+var skyUni = { top: { value: new THREE.Color('#8fa3b5') }, horizon: { value: new THREE.Color('#ecdcb0') }, sunDir: { value: new THREE.Vector3(0, 1, 0) }, sunCol: { value: new THREE.Color('#fff2cc') } };
+var sky = new THREE.Mesh(new THREE.SphereGeometry(20000, 32, 16), new THREE.ShaderMaterial({
+  uniforms: skyUni, side: THREE.BackSide, depthWrite: false, fog: false,
+  vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+  fragmentShader: 'uniform vec3 top; uniform vec3 horizon; uniform vec3 sunDir; uniform vec3 sunCol; varying vec3 vP;' +
+    'void main(){ float h = clamp(vP.y, -0.2, 1.0); float t = pow(clamp(h,0.0,1.0), 0.55); vec3 c = mix(horizon, top, t);' +
+    ' float s = max(dot(normalize(vP), normalize(sunDir)), 0.0); c += sunCol * (pow(s, 900.0) * 1.2 + pow(s, 12.0) * 0.18);' +
+    ' if (h < 0.0) c = horizon * 0.92; gl_FragColor = vec4(c, 1.0); }'
+}));
+sky.renderOrder = -10; scene.add(sky);
+
+var hemi = new THREE.HemisphereLight(0xfff2d0, 0x8a7a55, 0.8); scene.add(hemi);
+var sun = new THREE.DirectionalLight(0xfff2d0, 1.2);
+sun.castShadow = !PHONE;
+sun.shadow.mapSize.set(2048, 2048);
+var sc = sun.shadow.camera; sc.left = -700; sc.right = 700; sc.top = 700; sc.bottom = -700; sc.near = 10; sc.far = 4000;
+sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.6;
+scene.add(sun); scene.add(sun.target);
+
+// ---------- ground ----------
+var EXT = M.ext; // x0,y0,x1,y1
+function shapesFrom(list) {
+  var shapes = [];
+  list.forEach(function (p) {
+    var outer = ring(p[0]); if (outer.length < 6) return;
+    if (area2(outer) < 0) outer = reverseRing(outer);
+    var sh = new THREE.Shape(toV2(outer));
+    for (var i = 1; i < p.length; i++) { var h = ring(p[i]); if (h.length < 6) continue; if (area2(h) > 0) h = reverseRing(h); sh.holes.push(new THREE.Path(toV2(h))); }
+    shapes.push(sh);
+  });
+  return shapes;
+}
+function reverseRing(r) { var o = []; for (var i = r.length - 2; i >= 0; i -= 2) o.push(r[i], r[i + 1]); return o; }
+function flatMesh(shapes, color, y, depth, opts) {
+  var geo = depth ? new THREE.ExtrudeGeometry(shapes, { depth: depth, bevelEnabled: false, curveSegments: 1 }) : new THREE.ShapeGeometry(shapes, 1);
+  geo.rotateX(-Math.PI / 2);
+  var mat = new THREE.MeshLambertMaterial(Object.assign({ color: color }, opts || {}));
+  var m = new THREE.Mesh(geo, mat); m.position.y = y; m.receiveShadow = true; return m;
+}
+var EMB = 3.2; // embankment height, exaggerated a little
+var water = { material: new THREE.MeshPhongMaterial({ color: C.water, shininess: 60, specular: 0x7d8a80 }) };
+var landMesh, parkMesh, bridgeMesh, streetLines, bldMesh;
+
+function buildGround() {
+  var landShapes = shapesFrom(M.land);
+  var land = flatMesh(landShapes, C.land, -EMB, EMB, {});
+  // embankment sides darker: colour by normal using a second material group
+  land.material = [new THREE.MeshLambertMaterial({ color: C.land }), new THREE.MeshLambertMaterial({ color: C.granite })];
+  landMesh = land; scene.add(land);
+  var wm = new THREE.Mesh(new THREE.ShapeGeometry(shapesFrom(M.water), 1), water.material);
+  wm.geometry.rotateX(-Math.PI / 2); wm.position.y = -EMB + 0.6; wm.receiveShadow = true; scene.add(wm);
+  // beyond the surveyed area the city simply goes on: a plain surround fading into the haze
+  var B = 40000, outer = new THREE.Shape([new THREE.Vector2(EXT[0] - B, EXT[1] - B), new THREE.Vector2(EXT[2] + B, EXT[1] - B), new THREE.Vector2(EXT[2] + B, EXT[3] + B), new THREE.Vector2(EXT[0] - B, EXT[3] + B)]);
+  outer.holes.push(new THREE.Path([new THREE.Vector2(EXT[0], EXT[1]), new THREE.Vector2(EXT[0], EXT[3]), new THREE.Vector2(EXT[2], EXT[3]), new THREE.Vector2(EXT[2], EXT[1])]));
+  var og = new THREE.ShapeGeometry(outer, 1); og.rotateX(-Math.PI / 2);
+  var surround = new THREE.Mesh(og, new THREE.MeshLambertMaterial({ color: new THREE.Color('#bfae80') })); surround.position.y = -0.05; scene.add(surround);
+  parkMesh = flatMesh(shapesFrom(M.parks), C.park, 0.08, 0, { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+  scene.add(parkMesh);
+  bridgeMesh = flatMesh(shapesFrom(M.br), C.bridge, -0.9, 1.25, {});
+  bridgeMesh.castShadow = true; scene.add(bridgeMesh);
+  // streets as faint centre lines
+  var pos = [];
+  M.s.forEach(function (s) { var r = ring(s[1]); for (var i = 0; i + 3 < r.length; i += 2) { pos.push(r[i], 0.25, -r[i + 1], r[i + 2], 0.25, -r[i + 3]); } });
+  var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  streetLines = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: C.street, transparent: true, opacity: 0.55 }));
+  scene.add(streetLines);
+}
+
+// ---------- buildings ----------
+function hash(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+var ISAAC = null, LMP = {};
+S.landmarks.forEach(function (l) { LMP[l.id] = l.p; });
+function buildBuildings() {
+  var P = [], N = [], Cl = [];
+  var tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3(), nrm = new THREE.Vector3();
+  function pushTri(ax, ay, az, bx, by, bz, cx, cy, cz, nx, ny, nz, col) {
+    // keep winding consistent with the intended normal
+    tmpA.set(bx - ax, by - ay, bz - az); tmpB.set(cx - ax, cy - ay, cz - az); nrm.crossVectors(tmpA, tmpB);
+    if (nrm.x * nx + nrm.y * ny + nrm.z * nz < 0) { var t; t = bx; bx = cx; cx = t; t = by; by = cy; cy = t; t = bz; bz = cz; cz = t; }
+    P.push(ax, ay, az, bx, by, bz, cx, cy, cz); N.push(nx, ny, nz, nx, ny, nz, nx, ny, nz);
+    Cl.push(col[0], col[1], col[2], col[3], col[4], col[5], col[6], col[7], col[8]);
+  }
+  var isaac = LMP.isaac;
+  M.b.forEach(function (b, bi) {
+    var lv = b[0], kind = b[1];
+    var outer = ring(b[2]); if (outer.length < 6) return;
+    if (area2(outer) < 0) outer = reverseRing(outer);
+    var holes = [];
+    for (var i = 3; i < b.length; i++) { var h = ring(b[i]); if (h.length < 6) continue; if (area2(h) > 0) h = reverseRing(h); holes.push(h); }
+    var cx = outer[0], cy = outer[1];
+    var hgt = lv * 3.7 + 1.2 + hash(bi) * 1.6;
+    if (kind === 1) hgt = Math.max(hgt, 16);
+    if (isaac && Math.hypot(cx - isaac[0], cy - isaac[1]) < 75) hgt = 38;
+    var fc = FACADES[Math.floor(hash(bi + 7) * FACADES.length)];
+    if (kind === 1) fc = new THREE.Color('#ece3cf');
+    var rc = ROOFS[Math.floor(hash(bi + 13) * ROOFS.length)];
+    var lo = fc.clone().multiplyScalar(0.72), hi = fc;
+    var colWall = function (top) { return top ? hi : lo; };
+    [outer].concat(holes).forEach(function (r) {
+      var n = r.length / 2;
+      for (var i = 0; i < n; i++) {
+        var j = (i + 1) % n;
+        var ax = r[2 * i], ay = -r[2 * i + 1], bx = r[2 * j], by = -r[2 * j + 1];
+        var dx = bx - ax, dz = by - ay; var L = Math.hypot(dx, dz) || 1;
+        // outward normal for a CCW outer ring (map coords) or CW hole, mapped to world x/z
+        var nx = (r[2 * j + 1] - r[2 * i + 1]) / L, nz = (r[2 * j] - r[2 * i]) / L;
+        var c0 = colWall(false), c1 = colWall(true);
+        pushTri(ax, 0, ay, bx, 0, by, bx, hgt, by, nx, 0, nz, [c0.r, c0.g, c0.b, c0.r, c0.g, c0.b, c1.r, c1.g, c1.b]);
+        pushTri(ax, 0, ay, bx, hgt, by, ax, hgt, ay, nx, 0, nz, [c0.r, c0.g, c0.b, c1.r, c1.g, c1.b, c1.r, c1.g, c1.b]);
+      }
+    });
+    var contour = toV2(outer), hv = holes.map(toV2);
+    var tris = THREE.ShapeUtils.triangulateShape(contour, hv);
+    var all = contour.concat.apply(contour, hv);
+    var rcol = [rc.r, rc.g, rc.b, rc.r, rc.g, rc.b, rc.r, rc.g, rc.b];
+    tris.forEach(function (t) {
+      var a = all[t[0]], bb = all[t[1]], c = all[t[2]];
+      pushTri(a.x, hgt, -a.y, bb.x, hgt, -bb.y, c.x, hgt, -c.y, 0, 1, 0, rcol);
+    });
+  });
+  var g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(Cl, 3));
+  bldMesh = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true }));
+  bldMesh.castShadow = true; bldMesh.receiveShadow = true;
+  scene.add(bldMesh);
+}
+
+// ---------- landmarks ----------
+var goldMat = new THREE.MeshStandardMaterial({ color: C.gold, metalness: 0.75, roughness: 0.32, emissive: 0x3a2706 });
+var whiteMat = new THREE.MeshLambertMaterial({ color: 0xece3cf });
+function addAt(mesh, p, y) { mesh.position.set(p[0], y, -p[1]); mesh.castShadow = true; scene.add(mesh); return mesh; }
+var ghost;
+function buildLandmarks() {
+  var p = LMP.isaac;
+  addAt(new THREE.Mesh(new THREE.CylinderGeometry(17, 18, 22, 32), whiteMat), p, 38 + 11);
+  var dome = new THREE.Mesh(new THREE.SphereGeometry(14.5, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), goldMat); addAt(dome, p, 60);
+  addAt(new THREE.Mesh(new THREE.CylinderGeometry(3, 3.4, 12, 16), goldMat), p, 80);
+  addAt(new THREE.Mesh(new THREE.ConeGeometry(1.4, 9, 8), goldMat), p, 90);
+  [[-28, -28], [28, -28], [-28, 28], [28, 28]].forEach(function (o) { addAt(new THREE.Mesh(new THREE.SphereGeometry(4, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), goldMat), [p[0] + o[0], p[1] + o[1]], 42); });
+  p = LMP.admiralty;
+  addAt(new THREE.Mesh(new THREE.BoxGeometry(22, 30, 22), whiteMat), [p[0], p[1] - 70], 15);
+  addAt(new THREE.Mesh(new THREE.CylinderGeometry(6, 7, 14, 8), whiteMat), [p[0], p[1] - 70], 37);
+  addAt(new THREE.Mesh(new THREE.ConeGeometry(2.6, 30, 8), goldMat), [p[0], p[1] - 70], 59);
+  p = LMP.peterpaul;
+  addAt(new THREE.Mesh(new THREE.BoxGeometry(14, 42, 14), whiteMat), [p[0] - 62, p[1]], 21);
+  addAt(new THREE.Mesh(new THREE.CylinderGeometry(4.5, 6, 16, 8), goldMat), [p[0] - 62, p[1]], 50);
+  addAt(new THREE.Mesh(new THREE.ConeGeometry(2.2, 64, 8), goldMat), [p[0] - 62, p[1]], 90);
+  // the vanished Church of the Assumption on the Hay Market, drawn as a ghost
+  p = LMP.assumption;
+  var gm = new THREE.MeshLambertMaterial({ color: 0xf2ead8, transparent: true, opacity: 0.55, depthWrite: false });
+  var gg = new THREE.MeshLambertMaterial({ color: C.gold, transparent: true, opacity: 0.6, depthWrite: false });
+  ghost = new THREE.Group();
+  var body = new THREE.Mesh(new THREE.BoxGeometry(34, 16, 26), gm); body.position.set(0, 8, 0); ghost.add(body);
+  var bel = new THREE.Mesh(new THREE.BoxGeometry(10, 34, 10), gm); bel.position.set(-24, 17, 0); ghost.add(bel);
+  var spire = new THREE.Mesh(new THREE.ConeGeometry(3, 14, 8), gg); spire.position.set(-24, 41, 0); ghost.add(spire);
+  [[0, 0, 7], [-9, -7, 4.5], [9, -7, 4.5], [-9, 7, 4.5], [9, 7, 4.5]].forEach(function (d) {
+    var dr = new THREE.Mesh(new THREE.CylinderGeometry(d[2] * 0.8, d[2] * 0.8, d[2] * 1.4, 12), gm); dr.position.set(d[0], 16 + d[2] * 0.7, d[1]); ghost.add(dr);
+    var dm = new THREE.Mesh(new THREE.SphereGeometry(d[2], 14, 10), gg); dm.position.set(d[0], 16 + d[2] * 1.4 + d[2] * 0.5, d[1]); ghost.add(dm);
+  });
+  ghost.position.set(p[0], 0, -p[1]); ghost.rotation.y = 0.62; scene.add(ghost);
+}
+
+// ---------- locations ----------
+var LOC = S.locations, locMeshes = {};
+var CONF_COL = { textual: C.ink, traditional: C.ochre, conjectural: new THREE.Color('#6b5a40') };
+var ringGeo = new THREE.RingGeometry(9, 12.5, 40); ringGeo.rotateX(-Math.PI / 2);
+var poleGeo = new THREE.CylinderGeometry(0.7, 0.7, 26, 6); poleGeo.translate(0, 13, 0);
+var headGeo = new THREE.OctahedronGeometry(4.2); headGeo.translate(0, 29, 0);
+function buildPins() {
+  Object.keys(LOC).forEach(function (k) {
+    var l = LOC[k]; if (k === 'siberia') return;
+    var col = CONF_COL[l.conf];
+    var g = new THREE.Group();
+    var rm = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85, depthWrite: false }));
+    rm.position.y = 0.6; g.add(rm);
+    var pole = new THREE.Mesh(poleGeo, new THREE.MeshLambertMaterial({ color: col })); g.add(pole);
+    var hm = new THREE.Mesh(headGeo, l.conf === 'conjectural' ? new THREE.MeshBasicMaterial({ color: col, wireframe: true }) : new THREE.MeshLambertMaterial({ color: col, emissive: col.clone().multiplyScalar(0.25) }));
+    g.add(hm);
+    g.position.set(l.p[0], 0, -l.p[1]);
+    g.userData = { ring: rm, head: hm };
+    scene.add(g); locMeshes[k] = g;
+  });
+}
+
+// ---------- routes ----------
+var EV = S.events;
+var routeObjs = {};
+var lineMats = [];
+function mkLineMat(color, width, dashed, opacity) {
+  var m = new THREE.LineMaterial({ color: color.getHex ? color.getHex() : color, linewidth: width, dashed: !!dashed, dashSize: 14, gapSize: 9, transparent: true, opacity: opacity == null ? 1 : opacity, depthTest: true });
+  lineMats.push(m); return m;
+}
+function buildRoutes() {
+  EV.forEach(function (e) {
+    if (!e.route) return;
+    var r = ring(e.route), pos = [];
+    for (var i = 0; i < r.length; i += 2) pos.push(r[i], 2.2, -r[i + 1]);
+    var geo = new THREE.LineGeometry(); geo.setPositions(pos);
+    var line = new THREE.Line2(geo, matAll);
+    line.computeLineDistances(); line.visible = false; line.renderOrder = 2;
+    scene.add(line);
+    // cumulative distances for the walker
+    var pts = [], cum = [0];
+    for (var j = 0; j < r.length; j += 2) pts.push(new THREE.Vector3(r[j], 0, -r[j + 1]));
+    for (var k = 1; k < pts.length; k++) cum.push(cum[k - 1] + pts[k].distanceTo(pts[k - 1]));
+    routeObjs[e.id] = { line: line, pts: pts, cum: cum, total: cum[cum.length - 1], orig: Float32Array.from(geo.attributes.instanceStart.data.array), mod: -1 };
+  });
+}
+var activeTrail = null;
+
+// ---------- walker ----------
+var walker = new THREE.Group();
+(function () {
+  var coat = new THREE.MeshLambertMaterial({ color: 0x1f1813 });
+  var skin = new THREE.MeshLambertMaterial({ color: 0xd9b48f });
+  var body = new THREE.Mesh(new THREE.ConeGeometry(2.6, 8.5, 12), coat); body.position.y = 4.25; walker.add(body);
+  var head = new THREE.Mesh(new THREE.SphereGeometry(1.25, 12, 10), skin); head.position.y = 9.5; walker.add(head);
+  // the battered tall hat "from Zimmerman's"
+  var hat = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.3, 2.6, 12), coat); hat.position.y = 11.6; hat.rotation.z = 0.14; walker.add(hat);
+  var brim = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 1.9, 0.2, 14), coat); brim.position.y = 10.4; walker.add(brim);
+  var cv = document.createElement('canvas'); cv.width = cv.height = 64;
+  var cx = cv.getContext('2d'); var gr = cx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,214,120,0.95)'); gr.addColorStop(0.35, 'rgba(230,170,60,0.45)'); gr.addColorStop(1, 'rgba(230,170,60,0)');
+  cx.fillStyle = gr; cx.fillRect(0, 0, 64, 64);
+  var glow = new THREE.Mesh(new THREE.PlaneGeometry(26, 26), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending }));
+  glow.rotation.x = -Math.PI / 2; glow.position.y = 0.8; glow.renderOrder = 5; walker.add(glow);
+  walker.traverse(function (o) { if (o.isMesh && o !== glow) o.castShadow = true; });
+})();
+scene.add(walker);
+var svidWalker = walker.clone(); svidWalker.traverse(function (o) { if (o.isMesh && o.material && o.material.color && o.material.color.getHex() === 0x1f1813) { o.material = o.material.clone(); o.material.color.set(0x2c3f4d); } });
+
+// ---------- siberia arrow ----------
+var arrow = new THREE.Group();
+(function () {
+  var m = new THREE.MeshBasicMaterial({ color: C.blood, transparent: true, opacity: 0.9, depthTest: false });
+  var shaft = new THREE.Mesh(new THREE.BoxGeometry(900, 2, 26), m); shaft.position.x = 450; arrow.add(shaft);
+  var head = new THREE.Mesh(new THREE.ConeGeometry(60, 140, 3), m); head.rotation.z = -Math.PI / 2; head.position.x = 960; head.scale.z = 0.4; arrow.add(head);
+  arrow.position.set(LOC.haymarket.p[0] + 60, 60, -LOC.haymarket.p[1]); arrow.scale.set(1, 1, 1.6); arrow.renderOrder = 8; arrow.visible = false; scene.add(arrow);
+})();
+
+// ---------- sun & sky ----------
+function lerpC(a, b, t) { return a.clone().lerp(b, t); }
+var KEYS = [
+  { e: -12, top: '#141a2a', hor: '#2c3247', sun: '#7f8fb8', si: 0.0, hi: 0.32, fog: '#252b3d' },
+  { e: -7, top: '#25304b', hor: '#6f6a86', sun: '#a5a9c9', si: 0.0, hi: 0.45, fog: '#59577a' },
+  { e: -3, top: '#3f5274', hor: '#c58f84', sun: '#f0a07a', si: 0.15, hi: 0.55, fog: '#a98987' },
+  { e: 1, top: '#5c7699', hor: '#eaa86a', sun: '#ffb06a', si: 0.9, hi: 0.62, fog: '#d8a679' },
+  { e: 8, top: '#7d97b2', hor: '#ecc88f', sun: '#ffd49a', si: 1.2, hi: 0.7, fog: '#e2c99a' },
+  { e: 25, top: '#93a9bb', hor: '#e9d9aa', sun: '#fff0cc', si: 0.98, hi: 0.66, fog: '#ddd0a6' },
+  { e: 60, top: '#98adbe', hor: '#ebdcae', sun: '#fff3d6', si: 0.86, hi: 0.64, fog: '#dfd3aa' }
+];
+KEYS.forEach(function (k) { ['top', 'hor', 'sun', 'fog'].forEach(function (f) { k[f] = new THREE.Color(k[f]); }); });
+function skyAt(el) {
+  if (el <= KEYS[0].e) return KEYS[0];
+  for (var i = 1; i < KEYS.length; i++) {
+    if (el <= KEYS[i].e) {
+      var a = KEYS[i - 1], b = KEYS[i], t = (el - a.e) / (b.e - a.e);
+      return { top: lerpC(a.top, b.top, t), hor: lerpC(a.hor, b.hor, t), sun: lerpC(a.sun, b.sun, t), fog: lerpC(a.fog, b.fog, t), si: a.si + (b.si - a.si) * t, hi: a.hi + (b.hi - a.hi) * t };
+    }
+  }
+  return KEYS[KEYS.length - 1];
+}
+// "Early in July" Old Style = second half of July by our calendar. Local mean time, 59.93 N.
+function sunPos(day, hhmm) {
+  var hm = hhmm.split(':'), hrs = +hm[0] + hm[1] / 60;
+  var N = 200 + Math.min(day, 14) - 1;
+  var decl = 23.44 * Math.sin(2 * Math.PI * (284 + N) / 365) * Math.PI / 180;
+  var B = 2 * Math.PI * (N - 81) / 364, eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+  var H = ((hrs + eot / 60) - 12) * 15 * Math.PI / 180, lat = 59.93 * Math.PI / 180;
+  var el = Math.asin(Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(H));
+  var az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(lat) - Math.tan(decl) * Math.cos(lat)) + Math.PI;
+  return { el: el * 180 / Math.PI, az: az };
+}
+var lightNow = null, lightTarget = null;
+function setLight(st, k) {
+  var dirEl = Math.max(st.el, 4) * Math.PI / 180;
+  var d = new THREE.Vector3(Math.sin(st.az) * Math.cos(dirEl), Math.sin(dirEl), Math.cos(st.az) * Math.cos(dirEl));
+  if (st.el < -2) d.set(0.35, 0.8, 0.45).normalize(); // night: soft moonless sky light from overhead
+  skyUni.top.value.copy(k.top); skyUni.horizon.value.copy(k.hor); skyUni.sunCol.value.copy(st.el > -1 ? k.sun : new THREE.Color(0, 0, 0));
+  var sd = new THREE.Vector3(Math.sin(st.az) * Math.cos(st.el * Math.PI / 180), Math.sin(st.el * Math.PI / 180), Math.cos(st.az) * Math.cos(st.el * Math.PI / 180));
+  skyUni.sunDir.value.copy(sd);
+  sun.color.copy(k.sun); sun.intensity = k.si; hemi.intensity = k.hi;
+  hemi.color.copy(k.top).lerp(new THREE.Color('#fff2d0'), 0.45); hemi.groundColor.copy(k.hor).multiplyScalar(0.6);
+  fog.color.copy(k.fog);
+  sunDir.copy(d);
+  var night = st.el < -4;
+  document.body.classList.toggle('night', night);
+  labelsNight = night;
+  water.material.color.copy(C.water).lerp(k.top, 0.25);
+}
+var sunDir = new THREE.Vector3(0.3, 0.8, 0.4), labelsNight = false;
+var skyFrom = null, skyTo = null, skyT = 1;
+function blendSky(a, b, t) { return { top: lerpC(a.top, b.top, t), hor: lerpC(a.hor, b.hor, t), sun: lerpC(a.sun, b.sun, t), fog: lerpC(a.fog, b.fog, t), si: a.si + (b.si - a.si) * t, hi: a.hi + (b.hi - a.hi) * t }; }
+
+// ---------- labels ----------
+var labelLayer = $('labels'), labels = [];
+function mkLabel(text, ru, cls, pos3, key) {
+  var d = document.createElement('div'); d.className = 'lbl ' + (cls || '');
+  d.innerHTML = '<div class="in"><span class="n"></span>' + (ru ? '<span class="r"></span>' : '') + '</div>';
+  d.querySelector('.n').textContent = text; if (ru) d.querySelector('.r').textContent = ru;
+  labelLayer.appendChild(d);
+  var o = { el: d, pos: pos3, key: key, cls: cls || '', show: true };
+  labels.push(o); return o;
+}
+function buildLabels() {
+  Object.keys(LOC).forEach(function (k) {
+    if (k === 'siberia') return;
+    var l = LOC[k];
+    mkLabel(l.name, l.ru, l.conf === 'conjectural' ? 'conj' : '', new THREE.Vector3(l.p[0], 36, -l.p[1]), k);
+  });
+  S.landmarks.forEach(function (l) {
+    var h = { isaac: 104, admiralty: 76, peterpaul: 125, assumption: 50, dostoevsky: 22, winter: 28 }[l.id] || 30;
+    var o = mkLabel(l.name, null, 'lm', new THREE.Vector3(l.p[0], h, -l.p[1]), 'lm:' + l.id);
+  });
+}
+var v3 = new THREE.Vector3();
+var chromeCache = null;
+function chromeRects() {
+  if (!chromeCache) {
+    var a = $('app').getBoundingClientRect();
+    chromeCache = ['.mast', '#panel', '#tools', '#timeline', '#siberia'].map(function (q) {
+      var el = document.querySelector(q); if (!el || el.hidden) return null;
+      var r = el.getBoundingClientRect(); return [r.left - a.left, r.top - a.top, r.width, r.height];
+    }).filter(Boolean);
+  }
+  return chromeCache.slice();
+}
+var labelsOn = true, dayLocs = {}, endLocs = {};
+function hideLabel(o) { if (o.show) { o.el.style.display = 'none'; o.show = false; } }
+function updateLabels() {
+  var w = canvas.clientWidth, h = canvas.clientHeight;
+  var camDist = camera.position.distanceTo(controls.target);
+  var cand = [];
+  for (var i = 0; i < labels.length; i++) {
+    var o = labels[i];
+    var isLm = o.key.indexOf('lm:') === 0;
+    var isCur = cur && o.key === cur.loc;
+    var relevant = isCur || (!isLm && dayLocs[o.key]) || (isLm && camDist < 2600) || (showAll && !isLm);
+    if (!labelsOn && !isCur) relevant = false;
+    if (cur && cur.loc === 'siberia' && !isLm) relevant = o.key === 'haymarket';
+    if (!relevant) { hideLabel(o); continue; }
+    v3.copy(o.pos).project(camera);
+    if (!(v3.z < 1 && v3.x > -1.05 && v3.x < 1.05 && v3.y > -1.05 && v3.y < 1.05)) { hideLabel(o); continue; }
+    var d = camera.position.distanceTo(o.pos);
+    o.sx = (v3.x * 0.5 + 0.5) * w; o.sy = (-v3.y * 0.5 + 0.5) * h; o.isCur = isCur; o.isLm = isLm; o.dist = d;
+    o.prio = (isCur ? 1000 : 0) + (endLocs[o.key] ? 300 : 0) + (!isLm && dayLocs[o.key] ? 200 : 0) + (isLm ? 50 : 20) - d / 100;
+    cand.push(o);
+  }
+  cand.sort(function (a, b) { return b.prio - a.prio; });
+  var placed = chromeRects();
+  for (var j = 0; j < cand.length; j++) {
+    var c = cand[j];
+    if (!c.show) { c.el.style.display = ''; c.show = true; c.ow = 0; }
+    if (!c.ow) { c.ow = c.el.firstChild.offsetWidth; c.oh = c.el.firstChild.offsetHeight; }
+    var rx = c.sx - c.ow / 2, ry = c.sy - c.oh, clash = false;
+    for (var q = 0; q < placed.length; q++) { var r = placed[q]; if (rx < r[0] + r[2] + 4 && rx + c.ow + 4 > r[0] && ry < r[1] + r[3] + 2 && ry + c.oh + 2 > r[1]) { clash = true; break; } }
+    if (clash && !c.isCur) { hideLabel(c); continue; }
+    placed.push([rx, ry, c.ow, c.oh]);
+    var op = c.isCur ? 1 : Math.max(0.0, Math.min(1, 1.6 - c.dist / 3200));
+    if (c.isLm) op = Math.min(op, 0.9);
+    c.el.style.transform = 'translate(' + c.sx.toFixed(1) + 'px,' + c.sy.toFixed(1) + 'px)';
+    c.el.style.opacity = op.toFixed(2);
+    c.el.style.zIndex = c.isCur ? 3 : 1;
+    var cls = 'lbl ' + c.cls + (c.isCur ? ' cur' : '') + (labelsNight ? ' night' : '');
+    if (c.el.className !== cls) { c.el.className = cls; c.ow = 0; }
+  }
+}
+
+// ---------- story state ----------
+var showSvid = false, showAll = false, speed = 1, playing = false;
+var seq = [], cur = null, curIdx = 0;
+var DAYS = S.days;
+function evKey(e) { var hm = e.t.split(':'); return e.day * 1440 + (+hm[0]) * 60 + (+hm[1]); }
+function rebuildSeq() {
+  seq = EV.filter(function (e) { return e.who === 'R' || showSvid; }).slice().sort(function (a, b) { return evKey(a) - evKey(b) || (a.who === 'R' ? -1 : 1); });
+}
+function dayOf(e) { var d = DAYS[0]; DAYS.forEach(function (x) { if (e.day >= x.d) d = x; }); return d; }
+function partLabel(ch) {
+  if (ch.indexOf('Ep') === 0) return 'Epilogue · ' + ch.replace('Ep.', 'ch. ');
+  var p = ch.split('.'); return 'Part ' + p[0] + ' · ch. ' + p[1];
+}
+function typo(t, inner) {
+  var open = true;
+  t = t.replace(/"/g, function () { var q = inner ? (open ? '\u2018' : '\u2019') : (open ? '\u201C' : '\u201D'); open = !open; return q; });
+  return t.replace(/'/g, '\u2019').replace(/--/g, '\u2014');
+}
+function fmtM(m) { return m >= 1000 ? (m / 1000).toFixed(m >= 10000 ? 0 : 1) + ' km' : Math.round(m / 10) * 10 + ' m'; }
+var STATE_COL = { lucid: 'var(--lucid)', feverish: 'var(--fever)', delirious: 'var(--delir)' };
+var CONF_TXT = { textual: 'textual', traditional: 'traditional', conjectural: 'conjectural' };
+
+function renderPanel(e) {
+  var d = dayOf(e), l = LOC[e.loc];
+  $('ev-day').textContent = d.label;
+  $('ev-dname').textContent = d.name;
+  $('ev-clock').textContent = e.day === 99 ? partLabel(e.ch) : 'c. ' + e.t + ' · ' + partLabel(e.ch);
+  $('ev-title').textContent = typo(e.title);
+  $('pl-name').textContent = l.name; $('pl-ru').textContent = l.ru; $('pl-addr').textContent = l.addr;
+  var chip = $('pl-chip'); chip.textContent = CONF_TXT[l.conf]; chip.className = 'chip ' + l.conf;
+  $('ev-sum').textContent = typo(e.sum);
+  $('ev-q').textContent = typo(e.q, true);
+  $('ev-qref').textContent = (e.qref ? partLabel(e.qref.replace('Ep.', 'Ep.')) : '') + ' · tr. Constance Garnett';
+  var ex = $('ev-extra'); ex.innerHTML = '';
+  if (e.tn) { var n = document.createElement('div'); n.className = 'note tn'; n.innerHTML = '<h3>Garnett against the Russian</h3>'; var p = document.createElement('div'); p.textContent = typo(e.tn); n.appendChild(p); ex.appendChild(n); }
+  if (e.note_light) { var n2 = document.createElement('div'); n2.className = 'note'; n2.innerHTML = '<h3>Checking the sky</h3>'; var p2 = document.createElement('div'); p2.textContent = e.note_light; n2.appendChild(p2); ex.appendChild(n2); }
+  if (e.measure) ex.appendChild(measureBox(e.measure));
+  var f = $('ev-facts'); f.innerHTML = '';
+  function fact(k, v) { var dt = document.createElement('dt'); dt.textContent = k; var dd = document.createElement('dd'); if (typeof v === 'string') dd.textContent = v; else dd.appendChild(v); f.appendChild(dt); f.appendChild(dd); }
+  if (e.who === 'S') fact('Who', 'Svidrigailov, not Raskolnikov');
+  if (e.len) fact('Walk', fmtM(e.len) + (e.rc === 'inferred' ? ' · route inferred (dashed)' : ' · streets given by the text'));
+  else fact('Walk', e.loc === 'siberia' ? 'off the map' : 'stays put');
+  fact('The text', typo(l.text));
+  $('pl-note').textContent = typo(l.note);
+  $('panel-scroll').scrollTop = 0;
+  // readout
+  $('r-day').textContent = d.label.replace('Days', 'Days');
+  $('r-time').textContent = e.day === 99 ? '1867' : 'c. ' + e.t;
+  $('r-ch').textContent = partLabel(e.ch);
+  if (e.day === 99) $('r-sun').textContent = 'Siberia';
+  else { var sp = sunPos(e.day, e.t); $('r-sun').textContent = 'sun ' + (sp.el >= 0 ? sp.el.toFixed(0) + '° up' : Math.abs(sp.el).toFixed(0) + '° below'); }
+}
+function measureBox(m) {
+  var box = document.createElement('div'); box.className = 'measure';
+  var max = Math.max(m.text_m, m.route_m, m.short_m || 0);
+  var rows = [['text', 'The text: ' + m.label + ' ≈ ' + fmtM(m.text_m), m.text_m], ['route', 'This route: ' + fmtM(m.route_m), m.route_m]];
+  if (m.short_m) rows.push(['alt', (m.paces ? 'Shortest street route today: ' : 'Street route today: ') + fmtM(m.short_m), m.short_m]);
+  box.innerHTML = '<h3>Measuring the text</h3><div class="bars"></div><p></p>';
+  var bars = box.querySelector('.bars');
+  rows.forEach(function (r) {
+    var b = document.createElement('div'); b.className = 'bar ' + r[0];
+    b.innerHTML = '<span></span><div class="track"><div class="fill"></div></div>';
+    b.querySelector('span').textContent = r[1]; b.querySelector('.fill').style.width = (r[2] / max * 100).toFixed(1) + '%';
+    bars.appendChild(b);
+  });
+  var p = box.querySelector('p');
+  if (m.paces) p.textContent = 'To cover this route in 730 paces he would need ' + (m.route_m / m.paces).toFixed(2) + ' m strides; the shortest way needs ' + (m.short_m / m.paces).toFixed(2) + ' m. An ordinary pace is about 0.7 m. Either the number is a novelist’s exactness, or he did not cross K—— Bridge that evening.';
+  else p.textContent = 'A verst is 1,067 m, so the text means about 270 m. The shortest street route to the Canal 67 site is ' + fmtM(m.short_m) + '. The rival tradition, Sadovaya 28, is ' + fmtM(m.rival_m) + ' away, which is hard to square with the text.';
+  return box;
+}
+
+// ---------- timeline ----------
+var tickEls = {}, tip = $('tip');
+function buildTimeline() {
+  var root = $('days'); root.innerHTML = ''; tickEls = {};
+  DAYS.forEach(function (d, di) {
+    var next = DAYS[di + 1];
+    var evs = seq.filter(function (e) { return e.day >= d.d && (!next || e.day < next.d); });
+    var col = document.createElement('div'); col.className = 'day'; col.dataset.d = d.d;
+    col.innerHTML = '<div class="dl"><b></b> <span></span></div><div class="track"></div><div class="band"></div>';
+    col.querySelector('b').textContent = d.d === 99 ? 'Ep.' : d.label.replace('Days ', '').replace('Day ', '');
+    col.querySelector('.dl span').textContent = d.name;
+    col.title = d.label + ': ' + d.name;
+    var track = col.querySelector('.track'), band = col.querySelector('.band');
+    var span = d.d === 5 ? 3 : d.d === 11 ? 2 : 1;
+    function xOf(e) {
+      var hm = e.t.split(':'), m = (+hm[0]) * 60 + (+hm[1]);
+      if (d.d === 99) return e.id === 'e48' ? 30 : 70;
+      return ((e.day - d.d) * 1440 + m) / (1440 * span) * 100;
+    }
+    evs.forEach(function (e, i) {
+      var b = document.createElement('button'); b.className = 'tick ' + e.who + (e.len ? ' walk' : '');
+      b.style.left = xOf(e).toFixed(2) + '%';
+      b.setAttribute('aria-label', d.label + ', c. ' + e.t + ': ' + e.title);
+      b.addEventListener('click', function () { stop(); select(e.id); });
+      b.addEventListener('mouseenter', function () { showTip(b, (e.who === 'S' ? 'Svidrigailov · ' : '') + e.t + ' · ' + e.title); });
+      b.addEventListener('mouseleave', hideTip);
+      track.appendChild(b); tickEls[e.id] = b;
+      if (e.who === 'R') {
+        var x0 = xOf(e), nx = evs.filter(function (z) { return z.who === 'R'; });
+        var k = nx.indexOf(e), x1 = k + 1 < nx.length ? xOf(nx[k + 1]) : 100;
+        if (d.d === 99) { x0 = 0; x1 = 100; }
+        var seg = document.createElement('i'); seg.style.left = x0 + '%'; seg.style.width = Math.max(0.5, x1 - x0) + '%'; seg.style.background = STATE_COL[e.state];
+        band.appendChild(seg);
+      }
+    });
+    root.appendChild(col);
+  });
+}
+function showTip(el, txt) {
+  var r = el.getBoundingClientRect(), a = $('app').getBoundingClientRect();
+  tip.textContent = txt; tip.hidden = false;
+  var x = Math.min(Math.max(r.left + r.width / 2 - a.left, 90), a.width - 90);
+  tip.style.left = x + 'px'; tip.style.top = (r.top - a.top - 6) + 'px';
+}
+function hideTip() { tip.hidden = true; }
+function markTimeline() {
+  var ci = seq.indexOf(cur);
+  seq.forEach(function (e, i) { var t = tickEls[e.id]; if (!t) return; t.classList.toggle('on', e === cur); t.classList.toggle('past', i < ci); });
+  document.querySelectorAll('.day').forEach(function (c) { c.classList.toggle('cur', +c.dataset.d === dayOf(cur).d); });
+  var t = tickEls[cur.id];
+  if (t) { var wrap = $('days-wrap'), r = t.getBoundingClientRect(), wr = wrap.getBoundingClientRect(); if (r.left < wr.left + 20 || r.right > wr.right - 20) wrap.scrollLeft += (r.left - wr.left) - wr.width / 2; }
+}
+
+// ---------- route display ----------
+var matCur = mkLineMat(C.blood, 4.5, false, 1), matCurDash = mkLineMat(C.blood, 4.5, true, 1);
+var matDay = mkLineMat(C.ink, 2.4, false, 0.55), matDayDash = mkLineMat(C.ink, 2.4, true, 0.55);
+var matAll = mkLineMat(C.ink, 1.5, false, 0.22), matAllDash = mkLineMat(C.ink, 1.5, true, 0.22);
+var matS = mkLineMat(C.slate, 3.2, true, 0.95), matSFaint = mkLineMat(C.slate, 2, true, 0.4);
+matCur.depthTest = false; matCurDash.depthTest = false; matS.depthTest = false;
+function styleRoutes() {
+  var cd = dayOf(cur).d;
+  EV.forEach(function (e) {
+    var o = routeObjs[e.id]; if (!o) return;
+    var dash = e.rc === 'inferred';
+    var sameDay = dayOf(e).d === cd;
+    var vis = false, m = null;
+    if (e === cur) { vis = true; m = e.who === 'S' ? matS : (dash ? matCurDash : matCur); }
+    else if (e.who === 'S') { vis = showSvid && (sameDay || showAll); m = matSFaint; }
+    else if (sameDay && evKey(e) < evKey(cur)) { vis = true; m = dash ? matDayDash : matDay; }
+    else if (showAll) { vis = true; m = dash ? matAllDash : matAll; }
+    o.line.visible = vis; if (m) o.line.material = m;
+    o.line.renderOrder = e === cur ? 6 : 2;
+    fullTrail(o);
+  });
+}
+
+// ---------- camera flights ----------
+var flight = null;
+function frameFor(e) {
+  var o = routeObjs[e.id], l = LOC[e.loc];
+  var box = new THREE.Box3();
+  if (e.loc === 'siberia') { box.set(new THREE.Vector3(EXT[0] + 600, 0, -EXT[3] + 400), new THREE.Vector3(EXT[2], 0, -EXT[1])); }
+  else if (o && o.pts.length > 1) { o.pts.forEach(function (p) { box.expandByPoint(p); }); }
+  else { var c = new THREE.Vector3(l.p[0], 0, -l.p[1]); box.set(c.clone().addScalar(-160), c.clone().addScalar(160)); }
+  var c2 = box.getCenter(new THREE.Vector3()); var size = box.getSize(new THREE.Vector3());
+  var r = Math.max(size.x, size.z, 260) * 0.62;
+  var fovR = camera.fov * Math.PI / 180;
+  var aspect = Math.max(0.5, canvas.clientWidth / Math.max(1, canvas.clientHeight));
+  var dist = r / Math.tan(fovR / 2) / Math.min(1, aspect) * 1.12;
+  dist = Math.min(Math.max(dist, 260), 7000);
+  // keep the current heading; tilt about 52 degrees from vertical
+  var dir = camera.position.clone().sub(controls.target); dir.y = 0;
+  if (dir.lengthSq() < 1) dir.set(0, 0, 1);
+  dir.normalize();
+  var pol = dist > 2600 ? 0.6 : dist > 1500 ? 0.78 : 0.92;
+  var pos = c2.clone().add(dir.multiplyScalar(Math.sin(pol) * dist)); pos.y = Math.cos(pol) * dist;
+  // shift so the target sits left of the card on wide screens
+  return { target: c2, pos: pos };
+}
+function flyTo(fr, dur) {
+  if (REDUCED || !dur) { controls.target.copy(fr.target); camera.position.copy(fr.pos); controls.update(); return; }
+  flight = { t0: performance.now(), dur: dur, fromT: controls.target.clone(), fromP: camera.position.clone(), toT: fr.target, toP: fr.pos };
+}
+function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+// ---------- walking ----------
+// A walk lasts roughly as long as reading its card, so the figure never races ahead of the
+// text: short errands stroll, the long crossings of the city take longer, within bounds.
+var walk = null, scene0 = 0, sceneDur = 0;
+var aheadLine = null, aheadMat = mkLineMat(C.blood, 2.2, true, 0.42), aheadMatS = mkLineMat(C.slate, 2.2, true, 0.42);
+aheadMat.depthTest = false; aheadMatS.depthTest = false;
+function readMs(e) {
+  var words = [e.title, e.sum, e.q, e.tn || '', e.note_light || ''].join(' ').split(/\s+/).length;
+  return (words / 3.2 + 3) * 1000; // about 190 words a minute, plus a breath
+}
+function walkMs(e, o) {
+  var f = Math.min(1.6, Math.max(0.5, 0.45 + o.total / 4000));
+  return Math.min(50000, Math.max(7000, readMs(e) * f));
+}
+function startWalk(e) {
+  var o = routeObjs[e.id];
+  walker.visible = e.loc !== 'siberia' && e.who === 'R';
+  svidWalker.visible = false;
+  var w = e.who === 'S' ? svidWalker : walker;
+  if (e.who === 'S') { scene.add(svidWalker); svidWalker.visible = true; walker.visible = false; }
+  if (aheadLine) { scene.remove(aheadLine); aheadLine.geometry.dispose(); aheadLine = null; }
+  if (!o) {
+    var l = LOC[e.loc]; if (l && e.loc !== 'siberia') w.position.set(l.p[0], 0, -l.p[1]);
+    walk = null; return;
+  }
+  if (REDUCED) { placeAt(w, o, 1); fullTrail(o); walk = null; return; }
+  // the road ahead, faint and dashed, so you can see where he is going
+  var pos = []; o.pts.forEach(function (p) { pos.push(p.x, 2.1, p.z); });
+  var g = new THREE.LineGeometry(); g.setPositions(pos);
+  aheadLine = new THREE.Line2(g, e.who === 'S' ? aheadMatS : aheadMat); aheadLine.computeLineDistances(); aheadLine.renderOrder = 5;
+  scene.add(aheadLine);
+  walk = { o: o, w: w, t0: performance.now(), dur: walkMs(e, o) / speed, e: e, heading: null, last: 0 };
+  placeAt(w, o, 0);
+}
+// trapezoid velocity: ease in, walk steadily, ease out; returns the fraction of the route covered
+function gait(f, dur) {
+  var a = Math.min(0.18, 1600 / dur);
+  if (f < a) return f * f / (2 * a * (1 - a));
+  if (f > 1 - a) return 1 - (1 - f) * (1 - f) / (2 * a * (1 - a));
+  return (f - a / 2) / (1 - a);
+}
+function pointAt(o, d) {
+  d = Math.max(0, Math.min(o.total, d));
+  var k = 1; while (k < o.cum.length - 1 && o.cum[k] < d) k++;
+  var a = o.pts[k - 1], b = o.pts[k], seg = o.cum[k] - o.cum[k - 1] || 1;
+  return { k: k, t: Math.min(1, Math.max(0, (d - o.cum[k - 1]) / seg)), a: a, b: b };
+}
+function setTrail(o, k, x, z) {
+  var attr = o.line.geometry.attributes.instanceStart, arr = attr.data.array, m;
+  if (o.mod >= 0 && o.mod !== k - 1) { m = o.mod * 6 + 3; arr[m] = o.orig[m]; arr[m + 1] = o.orig[m + 1]; arr[m + 2] = o.orig[m + 2]; }
+  m = (k - 1) * 6 + 3; arr[m] = x; arr[m + 1] = o.orig[m + 1]; arr[m + 2] = z;
+  o.mod = k - 1; attr.data.needsUpdate = true;
+  o.line.geometry.instanceCount = k;
+}
+function fullTrail(o) {
+  if (o.mod >= 0) {
+    var attr = o.line.geometry.attributes.instanceStart, arr = attr.data.array, m = o.mod * 6 + 3;
+    arr[m] = o.orig[m]; arr[m + 1] = o.orig[m + 1]; arr[m + 2] = o.orig[m + 2]; o.mod = -1; attr.data.needsUpdate = true;
+  }
+  o.line.geometry.instanceCount = Infinity;
+}
+function wrapAngle(a) { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; }
+function placeAt(w, o, f, dt) {
+  var d = f * o.total, p = pointAt(o, d);
+  w.position.lerpVectors(p.a, p.b, p.t);
+  setTrail(o, p.k, w.position.x, w.position.z);
+  // face a point a little way ahead and turn towards it gradually
+  var ah = pointAt(o, d + 14), ax = ah.a.x + (ah.b.x - ah.a.x) * ah.t, az = ah.a.z + (ah.b.z - ah.a.z) * ah.t;
+  var dx = ax - w.position.x, dz = az - w.position.z;
+  if (dx * dx + dz * dz > 0.01) {
+    var want = Math.atan2(dx, dz);
+    if (!dt || (walk && walk.heading == null)) w.rotation.y = want;
+    else w.rotation.y += wrapAngle(want - w.rotation.y) * (1 - Math.exp(-dt * 7));
+    if (walk) walk.heading = w.rotation.y;
+  }
+  return w.position;
+}
+
+// ---------- selection ----------
+function select(id, opts) {
+  opts = opts || {};
+  var e = EV.filter(function (x) { return x.id === id; })[0]; if (!e) return;
+  if (e.who === 'S' && !showSvid) { showSvid = true; $('t-svid').setAttribute('aria-pressed', 'true'); rebuildSeq(); buildTimeline(); }
+  cur = e; curIdx = seq.indexOf(e);
+  // day locations for labels
+  dayLocs = {}; endLocs = {}; var cd = dayOf(e).d;
+  var prevE = null; seq.forEach(function (x) { if (x.who === e.who && evKey(x) < evKey(e)) prevE = x; });
+  endLocs[e.loc] = 1; if (e.from) endLocs[e.from] = 1; else if (prevE) endLocs[prevE.loc] = 1;
+  (e.via || []).forEach(function (v) { if (typeof v === 'string') endLocs[v] = 1; });
+  seq.forEach(function (x) { if (dayOf(x).d === cd) { dayLocs[x.loc] = 1; } });
+  renderPanel(e); markTimeline(); styleRoutes();
+  Object.keys(locMeshes).forEach(function (k) { var g = locMeshes[k]; var on = k === e.loc; g.scale.setScalar(on ? 1.5 : (dayLocs[k] ? 1 : 0.7)); g.userData.ring.material.opacity = on ? 1 : 0.6; });
+  // light
+  var to = e.day === 99 ? { el: 14, az: 2.0 } : sunPos(e.day, e.t);
+  var k = skyAt(to.el);
+  skyFrom = lightNow ? lightNow : k; skyTo = k; skyT = REDUCED ? 1 : 0; lightTarget = to;
+  if (REDUCED) setLight(to, k);
+  // siberia
+  $('siberia').hidden = e.loc !== 'siberia'; arrow.visible = e.loc === 'siberia'; chromeCache = null;
+  ghost.visible = true;
+  // camera + walk
+  flyTo(frameFor(e), opts.instant ? 0 : 1800);
+  startWalk(e);
+  scene0 = performance.now();
+  sceneDur = Math.max((walk ? walk.dur : 0) + 3500 / speed, readMs(e) / speed);
+  try { history.replaceState(null, '', '#' + e.id); } catch (err) { }
+}
+function step(dir) { var i = seq.indexOf(cur) + dir; if (i < 0 || i >= seq.length) return false; select(seq[i].id); return true; }
+function setPlayIcon() {
+  $('b-play').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  $('i-play').innerHTML = playing ? '<path d="M3 2h4v12H3zM9 2h4v12H9z"/>' : '<path d="M4 2l10 6-10 6z"/>';
+}
+function play() {
+  if (seq.indexOf(cur) === seq.length - 1) select(seq[0].id);
+  playing = true; setPlayIcon();
+  // if this card has already been on screen long enough, move on after a short pause
+  var now = performance.now(); if (!walk && now - scene0 > sceneDur) scene0 = now - sceneDur + 1500;
+  $('prog').hidden = false;
+}
+function stop() { playing = false; setPlayIcon(); $('prog').hidden = true; }
+function setSpeed(v) {
+  var now = performance.now(), r = speed / v;
+  if (walk) { var f = (now - walk.t0) / walk.dur; walk.dur *= r; walk.t0 = now - f * walk.dur; }
+  var g = (now - scene0) / sceneDur; sceneDur *= r; scene0 = now - g * sceneDur;
+  speed = v; $('b-speed').textContent = (v === 0.5 ? '½' : v) + '×';
+}
+
+// ---------- UI wiring ----------
+$('b-prev').onclick = function () { stop(); step(-1); };
+$('b-next').onclick = function () { stop(); step(1); };
+$('p-prev').onclick = function () { stop(); step(-1); };
+$('p-next').onclick = function () { stop(); step(1); };
+$('b-play').onclick = function () { playing ? stop() : play(); };
+$('b-speed').onclick = function () { setSpeed(speed === 1 ? 2 : speed === 2 ? 0.5 : 1); };
+$('t-all').onclick = function () { showAll = !showAll; this.setAttribute('aria-pressed', showAll); styleRoutes(); };
+$('t-svid').onclick = function () {
+  showSvid = !showSvid; this.setAttribute('aria-pressed', showSvid);
+  rebuildSeq(); buildTimeline();
+  if (cur.who === 'S' && !showSvid) select('e42'); else { markTimeline(); styleRoutes(); }
+};
+$('t-lbl').onclick = function () { labelsOn = !labelsOn; this.setAttribute('aria-pressed', labelsOn); };
+function openAbout(open) { $('about').hidden = !open; $('t-about').setAttribute('aria-pressed', open); if (open) $('about-close').focus(); }
+$('t-about').onclick = function () { openAbout(true); };
+$('about-close').onclick = function () { openAbout(false); };
+$('about').addEventListener('click', function (ev) { if (ev.target === this) openAbout(false); });
+var sheetOpen = false;
+$('handle').onclick = function () { sheetOpen = !sheetOpen; document.documentElement.style.setProperty('--sheet-h', sheetOpen ? '62vh' : '190px'); chromeCache = null; };
+window.addEventListener('keydown', function (ev) {
+  if (!$('about').hidden) { if (ev.key === 'Escape') openAbout(false); return; }
+  var tag = (ev.target && ev.target.tagName) || '';
+  if (ev.key === 'ArrowRight') { stop(); step(1); ev.preventDefault(); }
+  else if (ev.key === 'ArrowLeft') { stop(); step(-1); ev.preventDefault(); }
+  else if (ev.key === ' ' && tag !== 'BUTTON') { playing ? stop() : play(); ev.preventDefault(); }
+});
+controls.addEventListener('start', function () { flight = null; });
+window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h && (!cur || h !== cur.id)) routeHash(h); });
+function routeHash(h) {
+  var m = /^day-(\d+)$/.exec(h);
+  if (m) { var d = +m[1]; var e = seq.filter(function (x) { return dayOf(x).d === d || x.day === d; })[0]; if (e) { select(e.id); return true; } }
+  if (EV.some(function (x) { return x.id === h; })) { select(h); return true; }
+  return false;
+}
+
+// ---------- resize ----------
+function resize() {
+  var w = canvas.clientWidth, h = canvas.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  lineMats.forEach(function (m) { m.resolution.set(w, h); });
+  PHONE = window.matchMedia('(max-width: 760px)').matches;
+  // keep the subject clear of the side card on wide screens
+  if (!PHONE) camera.setViewOffset(w, h, Math.min(200, $('panel').offsetWidth / 2), 0, w, h);
+  else camera.setViewOffset(w, h, 0, Math.min(140, h * 0.16), w, h);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', function () { chromeCache = null; resize(); });
+
+// ---------- loop ----------
+var last = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  var dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (flight) {
+    var t = Math.min(1, (now - flight.t0) / flight.dur), k = ease(t);
+    controls.target.lerpVectors(flight.fromT, flight.toT, k);
+    camera.position.lerpVectors(flight.fromP, flight.toP, k);
+    if (t >= 1) flight = null;
+  }
+  if (skyT < 1) {
+    skyT = Math.min(1, skyT + dt / 1.4);
+    var bl = blendSky(skyFrom, skyTo, ease(skyT));
+    lightNow = bl; setLight(lightTarget, bl);
+  } else if (!lightNow && skyTo) { lightNow = skyTo; setLight(lightTarget, skyTo); }
+  var camD = camera.position.distanceTo(controls.target);
+  var wsc = Math.max(1, Math.min(9, camD / 380));
+  walker.scale.setScalar(wsc); svidWalker.scale.setScalar(wsc);
+  if (walk) {
+    var f = Math.min(1, (now - walk.t0) / walk.dur);
+    var s = gait(f, walk.dur), w = walk.w;
+    placeAt(w, walk.o, s, dt);
+    // a slight step and sway while moving
+    var v = Math.abs(s - walk.last) / Math.max(dt, 1e-3); walk.last = s;
+    var moving = Math.min(1, v * walk.dur / 1000);
+    w.position.y = Math.abs(Math.sin(now / 1000 * Math.PI * 1.7)) * 0.45 * wsc * moving;
+    w.rotation.z = Math.sin(now / 1000 * Math.PI * 1.7) * 0.05 * moving;
+    if (f >= 1) { fullTrail(walk.o); w.position.y = 0; w.rotation.z = 0; walk = null; if (aheadLine) aheadLine.visible = false; }
+  } else if (playing && now - scene0 > sceneDur) {
+    if (!step(1)) stop();
+  }
+  if (playing) $('prog-i').style.width = (Math.min(1, (now - scene0) / sceneDur) * 100).toFixed(2) + '%';
+  var pulse = 1 + Math.sin(now / 380) * 0.08;
+  if (cur && locMeshes[cur.loc]) locMeshes[cur.loc].userData.ring.scale.setScalar(pulse);
+  // shadows follow the view
+  sun.target.position.copy(controls.target);
+  sun.position.copy(controls.target).addScaledVector(sunDir, 2000);
+  var ext = Math.min(1400, Math.max(500, camD * 0.9)); sc_set(ext);
+  fog.near = camD * 0.85 + 300; fog.far = camD * 2.3 + 1800;
+  sky.position.copy(camera.position);
+  controls.update();
+  renderer.render(scene, camera);
+  updateLabels();
+}
+var lastExt = 0;
+function sc_set(e) { if (Math.abs(e - lastExt) < 60) return; lastExt = e; sc.left = -e; sc.right = e; sc.top = e; sc.bottom = -e; sc.updateProjectionMatrix(); }
+
+// ---------- boot ----------
+function boot(state) {
+  loadMsg.textContent = 'Raising 6,600 buildings…';
+  setTimeout(function () {
+    try {
+      buildGround(); buildBuildings(); buildLandmarks(); buildPins(); buildRoutes(); buildLabels();
+      rebuildSeq(); buildTimeline();
+      camera.position.set(-900, 1400, 1300); controls.target.set(-400, 0, 0);
+      resize();
+      var start = (state && state.ev) || (location.hash && location.hash.slice(1)) || 'e01';
+      if (!routeHash(start)) select('e01', { instant: true });
+      else if (flight) { flyTo({ target: flight.toT, pos: flight.toP }, 0); flight = null; }
+      $('loading').hidden = true;
+      requestAnimationFrame(frame);
+    } catch (err) {
+      $('loading').classList.add('err'); loadMsg.textContent = 'The scene could not be built: ' + err.message;
+      throw err;
+    }
+  }, 30);
+}
+if (window.claude && window.claude.hot && window.claude.hot.snapshot) { try { window.claude.hot.snapshot(function () { return { ev: cur && cur.id }; }); } catch (e) { } }
+if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
+else boot((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
