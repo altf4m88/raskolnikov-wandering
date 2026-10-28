@@ -94,6 +94,9 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
 .facts { margin-top: 14px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13.5px; }
 .facts dt { font: 11px/1.5 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .facts dd { margin: 0; min-width: 0; }
+.bk { font: 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 3px 5px 2px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
+.bk.agrees { background: rgba(142,154,120,.3); color: var(--ink); }
+.bk.differs { background: var(--blood); color: var(--paper); }
 .pnote { margin-top: 12px; font-size: 13.5px; color: var(--ink-2); }
 .nav2 { display: flex; gap: 8px; padding: 10px 22px 14px; border-top: 1px solid var(--rule); }
 .nav2 button { flex: 1; }
@@ -315,6 +318,17 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
         <li>The garret (Grazhdanskaya 19 / Stolyarny 5) and the pawnbroker's flat (Srednyaya Podyacheskaya 15 / Canal 104) are traditional but still argued over. The police office has two traditions: Canal 67, used here, and Sadovaya 28.</li>
         <li>Kozel's house, the tavern, Porfiry's "grey house", Potchinkov's, Bakaleyev's house number and Svidrigailov's watch-tower have no agreed address.</li>
         <li><b>The 730 paces.</b> At an ordinary 0.71 m pace, 730 paces is about 520 m. The text sends him "towards K. bridge", and that route measures about 1.1 km. Even the shortest street route today is about 0.7 km. Either Raskolnikov took enormous strides, or the number is a novelist's exactness, not a surveyor's.</li>
+      </ul>
+
+      <h3>Checked against a printed edition</h3>
+      <p>The Wordsworth Classics edition (Garnett translation, introduction by Keith Carabine) prints a hand-drawn map, "The St Petersburg of <i>Crime and Punishment</i>", with eight numbered sites. Each place it marks says on its scene card whether that edition agrees.</p>
+      <ul>
+        <li><b>Agrees:</b> Raskolnikov's room (1), the pawnbroker's (2), St Isaac's (4), the Nikolaevsky Bridge (6), Konnogvardeisky Boulevard, and Svidrigailov's death on Bolshoy Prospekt, Petersburg Side (8). Both maps guess the exact spot on that street; the book's is nearer its western end.</li>
+        <li><b>Differs:</b> Sonia's room (3). The book draws it east of Kokushkin Bridge, toward the Hay Market. This map keeps the tradition of Canal 73, west of the bridge, because Part V puts her house two doors from a bridge whose hidden name ends in "-sky". Voznesensky fits; Sennoy and Demidov, to the east, do not.</li>
+        <li><b>Corrected from the book:</b> the "X. Prospect" off the Hay Market. The book's "Obukhovsky Prospect" is the 1865 name of today's Moskovsky Prospekt; this map had used "Zabalkansky", a name it only got in 1878.</li>
+        <li><b>Added from the book:</b> the University (7), on Vasilievsky Island, where Raskolnikov studied until his money ran out.</li>
+        <li><b>Where the book is wrong:</b> its introduction says Petrovsky Island "contains the fortress of St Peter and St Paul", and its map writes "Petrovsky Island" across the Petersburg Side. The fortress stands on Zayachy (Hare) Island. Petrovsky Island is the separate island west of the Zhdanovka, where Raskolnikov dreams of the mare. Its Winter Palace (5) is also drawn away from the Neva, and Gorokhovaya is misspelt "Gorakhavya".</li>
+        <li>The book's map is a sketch, not to scale, so it can confirm which street or bank a place is on, not which house.</li>
       </ul>
 
       <h3>Garnett against the Russian</h3>
@@ -853,6 +867,14 @@ function renderPanel(e) {
   if (e.len) fact('Walk', fmtM(e.len) + (e.rc === 'inferred' ? ' · route inferred (dashed)' : ' · streets given by the text'));
   else fact('Walk', e.loc === 'siberia' ? 'off the map' : 'stays put');
   fact('The text', typo(l.text));
+  if (l.book) {
+    var bk = document.createElement('span');
+    bk.innerHTML = '<span class="bk"></span><span></span>';
+    bk.title = S.meta.edition;
+    bk.firstChild.textContent = l.book.verdict; bk.firstChild.classList.add(l.book.verdict);
+    bk.lastChild.textContent = (l.book.n ? 'No. ' + l.book.n + ': ' : '') + typo(l.book.text);
+    fact('Book map', bk);
+  }
   $('pl-note').textContent = typo(l.note);
   $('panel-scroll').scrollTop = 0;
   // readout

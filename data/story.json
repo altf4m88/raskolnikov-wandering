@@ -3,7 +3,8 @@
     "translation": "Constance Garnett, 1914 (Project Gutenberg #2554)",
     "original": "Ф. М. Достоевский, «Преступление и наказание», 1866 (ilibrary.ru text)",
     "pace_m": 0.71,
-    "verst_m": 1066.8
+    "verst_m": 1066.8,
+    "edition": "Wordsworth Classics edition (Garnett translation, introduction by Keith Carabine), map \"The St Petersburg of Crime and Punishment\""
   },
   "days": [
     {"d": 1, "label": "Day 1", "name": "The rehearsal"},
@@ -24,7 +25,8 @@
       "name": "Raskolnikov's garret", "ru": "Каморка Раскольникова",
       "ll": [59.927834, 30.310834], "addr": "Grazhdanskaya ul. 19 / Stolyarny per. 5",
       "conf": "traditional", "text": "\"S. Place\" (Russian: С—м переулке, \"S—— Lane\"); \"Shil's house … flat Number 14\"",
-      "note": "The plaque is on this corner house. Garnett's \"S. Place\" is Dostoevsky's \"S—— Lane\", read as Stolyarny Lane, a street then known for its drinking dens. The novel calls the house five-storied; at least one guide describes the real building as four."
+      "note": "The plaque is on this corner house. Garnett's \"S. Place\" is Dostoevsky's \"S—— Lane\", read as Stolyarny Lane, a street then known for its drinking dens. The novel calls the house five-storied; at least one guide describes the real building as four.",
+      "book": {"n": 1, "verdict": "agrees", "text": "Also at the top of Stolyarny Lane."}
     },
     "kokushkin": {
       "name": "Kokushkin Bridge", "ru": "Кокушкин мост",
@@ -36,7 +38,8 @@
       "name": "Alyona Ivanovna's flat", "ru": "Квартира старухи-процентщицы",
       "ll": [59.924867, 30.303236], "addr": "Srednyaya Podyacheskaya ul. 15 / Canal 104",
       "conf": "traditional", "text": "\"a huge house which on one side looked on to the canal, and on the other into the street\"",
-      "note": "The usual identification is this corner house by Kharlamov Bridge. Researchers still argue over it, and one popular article gives a different number on the canal."
+      "note": "The usual identification is this corner house by Kharlamov Bridge. Researchers still argue over it, and one popular article gives a different number on the canal.",
+      "book": {"n": 2, "verdict": "agrees", "text": "Also on the canal loop where Ekateringofsky (now Rimsky-Korsakov) Prospekt meets it; the house has an address on that prospekt too."}
     },
     "tavern": {
       "name": "Basement tavern", "ru": "Распивочная",
@@ -54,7 +57,8 @@
       "name": "Sonia's room at Kapernaumov's", "ru": "Дом Сони (Капернаумов)",
       "ll": [59.9263545, 30.3107025], "addr": "Griboyedov Canal 73",
       "conf": "traditional", "text": "\"an old green house of three storeys\" on the canal bank",
-      "note": "Traditional address. Svidrigailov rents the room next door at Madame Resslich's, through a locked door, which is how he overhears the confession."
+      "note": "Traditional address. Svidrigailov rents the room next door at Madame Resslich's, through a locked door, which is how he overhears the confession. The Wordsworth Classics map puts Sonia on the other side of Kokushkin Bridge, toward the Hay Market. No. 73 stays here because of Part V: Katerina Ivanovna's crowd gathers \"two houses\" short of Sonia's, by a bridge whose hidden name ends in \"-sky\". Voznesensky, to the west, fits that; Sennoy and Demidov, to the east, do not.",
+      "book": {"n": 3, "verdict": "differs", "text": "Places her east of Kokushkin Bridge, between it and Kameny Bridge, about 250 m from No. 73."}
     },
     "police": {
       "name": "District police office", "ru": "Полицейская контора",
@@ -84,13 +88,15 @@
       "name": "Konnogvardeisky Boulevard", "ru": "Конногвардейский бульвар",
       "ll": [59.93295, 30.2967], "addr": "Konnogvardeisky bulvar",
       "conf": "traditional", "text": "\"the K---- Boulevard\" (К—й бульвар)",
-      "note": "Here he meets the drunk girl being trailed by a dandy and gives a policeman twenty copecks."
+      "note": "Here he meets the drunk girl being trailed by a dandy and gives a policeman twenty copecks.",
+      "book": {"n": null, "verdict": "agrees", "text": "Labelled as Konogvardeysky Boulevard; no number."}
     },
     "nikolaevsky": {
       "name": "Nikolaevsky Bridge", "ru": "Николаевский мост",
       "ll": [59.93465, 30.28935], "addr": "Now the Blagoveshchensky Bridge",
       "conf": "textual", "text": "\"On the Nikolaevsky Bridge…\"",
-      "note": "Built in 1850, it was the only permanent bridge across the Neva in 1865. A chapel stood at its Vasilievsky end, and the panorama of St Isaac's is described from \"twenty paces from the chapel\"."
+      "note": "Built in 1850, it was the only permanent bridge across the Neva in 1865. A chapel stood at its Vasilievsky end, and the panorama of St Isaac's is described from \"twenty paces from the chapel\".",
+      "book": {"n": 6, "verdict": "agrees", "text": "Same bridge, marked at its Vasilievsky end, by the University."}
     },
     "razumikhin": {
       "name": "Razumikhin's old lodging", "ru": "Квартира Разумихина на В.О.",
@@ -148,9 +154,10 @@
     },
     "xprospekt": {
       "name": "Tavern on the \"X. Prospect\"", "ru": "Трактир на —ском проспекте",
-      "ll": [59.92625, 30.31762], "addr": "Probably Zabalkansky (now Moskovsky) Prospekt",
+      "ll": [59.92625, 30.31762], "addr": "Probably Obukhovsky Prospekt (Zabalkansky only from 1878; now Moskovsky)",
       "conf": "conjectural", "text": "\"X. Prospect, thirty or forty paces from the Hay Market\"",
-      "note": "Zabalkansky is the one prospekt that runs straight off the Hay Market, and its name fits the \"—sky\" ending."
+      "note": "It is the one prospekt that runs straight off the Hay Market. In 1865 it was called Obukhovsky, after the Obukhov Bridge over the Fontanka, which fits the Russian \"—sky\" ending. It became Zabalkansky only in 1878, and Moskovsky later still.",
+      "book": {"n": null, "verdict": "agrees", "text": "Labels the street running south from the Hay Market \"Obukhovsky Prospect\", the 1865 name."}
     },
     "fiancee": {
       "name": "Svidrigailov's betrothed", "ru": "Невеста Свидригайлова",
@@ -168,7 +175,8 @@
       "name": "The watch-tower", "ru": "Каланча",
       "ll": [59.95415, 30.29475], "addr": "Syezzhinskaya ul. at Bolshoy Prospekt (guess)",
       "conf": "conjectural", "text": "\"A high tower stood up on the left… the big house with the tower\"",
-      "note": "The Russian has him turn into \"—skaya street\". Syezzhinskaya, named after the district station-house, fits; the identification is a guess."
+      "note": "The Russian has him turn into \"—skaya street\". Syezzhinskaya, named after the district station-house, fits; the identification is a guess.",
+      "book": {"n": 8, "verdict": "agrees", "text": "Also on Bolshoy Prospekt, Petersburg Side, but nearer its western end; neither spot is precise."}
     },
     "neva": {
       "name": "By the Neva", "ru": "У Невы",
@@ -195,7 +203,8 @@
     {"id": "isaac", "name": "St Isaac's Cathedral", "ru": "Исаакиевский собор", "ll": [59.934077, 30.306129], "note": "Finished in 1858. Its \"cupola\" is the one he stares at from the Nikolaevsky Bridge."},
     {"id": "admiralty", "name": "Admiralty spire", "ru": "Адмиралтейство", "ll": [59.937918, 30.308554], "note": "The gilt spire that marks the head of Voznesensky Prospekt, his line of march to the Neva."},
     {"id": "peterpaul", "name": "Peter and Paul Cathedral", "ru": "Петропавловский собор", "ll": [59.950217, 30.316539], "note": "In 1865 its spire was the tallest point in the city."},
-    {"id": "winter", "name": "Winter Palace", "ru": "Зимний дворец", "ll": [59.94015, 30.31365], "note": "\"…turned facing the Neva, looking towards the palace.\""}
+    {"id": "winter", "name": "Winter Palace", "ru": "Зимний дворец", "ll": [59.94015, 30.31365], "note": "\"…turned facing the Neva, looking towards the palace.\""},
+    {"id": "university", "name": "St Petersburg University (Twelve Collegia)", "ru": "Университет (Двенадцать коллегий)", "ll": [59.9418, 30.2992], "note": "Raskolnikov's university, until he gave it up for lack of money. \"When he was attending the university, he had hundreds of times--generally on his way home--stood still on this spot\" (Part II, ch. 2): the Nikolaevsky Bridge, a few minutes' walk away."}
   ],
   "events": [
     {"id": "e01", "who": "R", "day": 1, "t": "19:00", "ch": "I.1", "loc": "pawnbroker", "from": "garret", "via": ["kokushkin"], "rc": "stated", "state": "feverish",

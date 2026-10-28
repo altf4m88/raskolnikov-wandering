@@ -27,6 +27,20 @@ This map takes a position on several open questions, and you should know where.
 - **The base map is today's city.** Building footprints are present-day OSM, capped at six storeys. Bridges that did not exist in 1865 (Palace, Trinity, Birzhevoy, Betancourt) are removed, and the router avoids them. Nothing else is back-dated.
 - **The 730 paces do not fit.** The text sends him "towards K. bridge". That route is about 1.1 km, and even the shortest street route today is about 0.7 km. At an ordinary 0.71 m pace, 730 paces is about 520 m.
 
+### Checked against a printed edition
+
+The Wordsworth Classics edition (Garnett translation, introduction by Keith Carabine) prints a hand-drawn map, "The St Petersburg of *Crime and Punishment*", with eight numbered sites. The scene card for each place it marks says whether that edition agrees.
+
+| Book | This map |
+|---|---|
+| 1 Raskolnikov's room, 2 pawnbroker's, 4 St Isaac's, 6 Nikolaevsky Bridge, Konnogvardeisky Boulevard | agree |
+| 8 Svidrigailov's suicide | agrees on the street (Bolshoy Prospekt, Petersburg Side); both guess the exact spot |
+| 3 Sonia's room | **differs.** The book puts it east of Kokushkin Bridge; this map keeps Canal 73, west of it. Part V puts her house two doors from a "—sky" bridge, which fits Voznesensky but not Sennoy or Demidov to the east. |
+| "Obukhovsky Prospect" | **adopted.** It was the 1865 name of the X. Prospect off the Hay Market. This map had said "Zabalkansky", a name given only in 1878. |
+| 7 University | **added** as a landmark |
+
+The book itself gets the islands wrong. It says Petrovsky Island "contains the fortress of St Peter and St Paul" and labels the Petersburg Side as Petrovsky Island. The fortress is on Zayachy (Hare) Island, and Petrovsky Island is the separate island where Raskolnikov dreams of the mare. Its Winter Palace (5) is drawn away from the Neva. The map is a sketch, so it can settle which street or bank a place is on, not which house.
+
 ### Garnett against the Russian
 
 These were found by checking the place names against the Russian text:
