@@ -1,6 +1,6 @@
 # raskolnikov-wandering
 
-**Raskolnikov's Petersburg**: a 3D, scene-by-scene map of Raskolnikov's walks in Dostoevsky's *Crime and Punishment* (1866), laid over the real street plan of St Petersburg.
+**Raskolnikov Wandering**: a 3D, scene-by-scene map of Raskolnikov's walks in Dostoevsky's *Crime and Punishment* (1866), laid over the real street plan of St Petersburg.
 
 Open `index.html` in a browser. It is a single file. It needs a network connection for three.js (jsDelivr) and Google Fonts.
 
@@ -45,12 +45,63 @@ tools/fetch_osm.py    OSM API tiles + full water relations  -> cache/osm_raw, ca
 tools/text.py         Gutenberg #2554 split into 41 chapters -> cache/chapters.json
 tools/build_map.py    land/water/parks/bridges/buildings + walking graph -> data/map.json
 tools/build_story.py  checks quotes, routes every walk, measures them -> data/story.built.json
-tools/bundle.py       packs everything into src/app.html -> index.html
+tools/bundle.py       packs everything into src/app.html -> index.html (+ csp.txt for the container)
 ```
 
 Run `tools/build.sh` for the whole pipeline. The first run downloads about 120 MB of OSM data into `./cache`. Use `tools/build.sh --bundle` to re-pack after editing only `src/app.html`.
 
 The scenes, places and quotations live in `data/story.json`. If you change a quotation that does not occur verbatim in Garnett, `build_story.py` reports it.
+
+## Deploy to Cloud Run
+
+The repo builds into a small container: unprivileged nginx serving the page and a health check. The `Dockerfile` re-packs the page from `src/` and `data/` during the build, so the image always matches the source, not the committed `index.html`.
+
+To deploy:
+
+1. Once per Google Cloud project:
+
+   ```bash
+   gcloud auth login
+   ```
+
+   ```bash
+   gcloud config set project YOUR_PROJECT_ID
+   ```
+
+   ```bash
+   gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+   ```
+
+2. Build in Cloud Build and deploy. Run this from the repo root:
+
+   ```bash
+   gcloud run deploy raskolnikov-wandering --source . --region europe-north1 --allow-unauthenticated
+   ```
+
+   Notes:
+   - `europe-north1` (Finland) is the closest region to Petersburg; any region works.
+   - `--allow-unauthenticated` makes the page public. Some organisation policies forbid this. Drop the flag to keep the service private.
+   - Add `--max-instances 2` if you want a hard cap on cost.
+
+What the container does:
+
+- **Port:** listens on `$PORT`, which Cloud Run sets. The default is 8080.
+- **Endpoints:** serves `/` (and `/index.html`) plus `/healthz`. Everything else returns 404, so the data files and build tools are never exposed.
+- **Compression:** sends the page pre-gzipped, about 290 KB instead of 1.4 MB, with `Cache-Control: no-cache` and an ETag, so repeat visits get a `304`.
+- **Security headers:** a Content-Security-Policy that pins the page's one inline script by its SHA-256 hash and allows only jsDelivr (three.js) and Google Fonts. It also sets `nosniff`, a referrer policy, a permissions policy and HSTS.
+- **Base images:** pulled through `mirror.gcr.io`, Google's cache of Docker Hub, to avoid Docker Hub's anonymous pull limits.
+
+To test the container locally:
+
+```bash
+docker build -t raskolnikov-wandering .
+```
+
+```bash
+docker run --rm -p 8080:8080 raskolnikov-wandering
+```
+
+Then open http://localhost:8080.
 
 ## Sources and licences
 

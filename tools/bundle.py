@@ -1,10 +1,10 @@
 """Pack map geometry + story into the page template.
 
-usage: python3 bundle.py build/map.json build/story_built.json src/app.html OUT_DIR
-writes OUT_DIR/index.html (full document) and OUT_DIR/artifact.html (body fragment)
-and data/map.packed.json (the encoded geometry, for reference).
+usage: python3 bundle.py data/map.json data/story.built.json src/app.html OUT_DIR
+writes OUT_DIR/index.html (full document), OUT_DIR/artifact.html (body fragment)
+and OUT_DIR/csp.txt (a Content-Security-Policy that pins the inline app script by hash).
 """
-import sys, json, os
+import sys, json, os, re, hashlib, base64
 
 mp = json.load(open(sys.argv[1]))
 st = json.load(open(sys.argv[2]))
@@ -45,4 +45,22 @@ full = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
         + head + '</head>\n<body>\n' + rest + '\n</body>\n</html>\n')
 open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8').write(full)
+
+# The page has exactly one executable inline script (the JSON data block is not executed).
+inline = [m.group(2) for m in re.finditer(r'<script(\s[^>]*)?>(.*?)</script>', full, re.S)
+          if not re.search(r'\bsrc=|application/json', m.group(1) or '')]
+assert len(inline) == 1, f'expected one inline script, found {len(inline)}'
+sha = base64.b64encode(hashlib.sha256(inline[0].encode('utf-8')).digest()).decode()
+csp = '; '.join([
+    "default-src 'none'",
+    f"script-src 'sha256-{sha}' https://cdn.jsdelivr.net",
+    "style-src 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src https://fonts.gstatic.com",
+    "img-src 'self' data: blob:",
+    "connect-src 'self'",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "frame-ancestors 'self'",
+])
+open(os.path.join(out_dir, 'csp.txt'), 'w').write(csp)
 print('bundle', round(len(body.encode()) / 1024), 'KB')

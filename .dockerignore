@@ -1,0 +1,9 @@
+# Allowlist: the image is built from source, so only what bundle.py needs goes in.
+# (The committed index.html is for GitHub Pages and opening locally; the image makes its own.)
+*
+!Dockerfile
+!tools/bundle.py
+!src/
+!data/map.json
+!data/story.built.json
+!deploy/

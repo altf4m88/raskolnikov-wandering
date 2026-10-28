@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Raskolnikov's Petersburg</title>
+<title>Raskolnikov Wandering</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,8 +99,6 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
 .facts { margin-top: 14px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13.5px; }
 .facts dt { font: 11px/1.5 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .facts dd { margin: 0; min-width: 0; }
-.state { display: inline-flex; align-items: center; gap: 6px; }
-.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .pnote { margin-top: 12px; font-size: 13.5px; color: var(--ink-2); }
 .nav2 { display: flex; gap: 8px; padding: 10px 22px 14px; border-top: 1px solid var(--rule); }
 .nav2 button { flex: 1; }
@@ -204,7 +202,7 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
   <div id="labels" aria-hidden="true"></div>
 
   <header class="mast">
-    <h1>Raskolnikov's <i>Petersburg</i></h1>
+    <h1>Raskolnikov <i>Wandering</i></h1>
     <div class="ru">«Преступление и наказание» · the walks of Crime and Punishment, July 1865</div>
     <div class="readout" id="readout" aria-live="polite"><span id="r-day">Day 1</span><span id="r-time">c. 19:00</span><span id="r-ch">Part I · ch. 1</span><span class="sun" id="r-sun">sun —</span></div>
   </header>
@@ -310,7 +308,7 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
     </div>
   </div>
 
-  <div id="loading"><div><h2>Raskolnikov's Petersburg</h2><p id="load-msg">Laying out the Haymarket district…</p></div></div>
+  <div id="loading"><div><h2>Raskolnikov Wandering</h2><p id="load-msg">Laying out the Haymarket district…</p></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
@@ -760,7 +758,6 @@ function typo(t, inner) {
   return t.replace(/'/g, '\u2019').replace(/--/g, '\u2014');
 }
 function fmtM(m) { return m >= 1000 ? (m / 1000).toFixed(m >= 10000 ? 0 : 1) + ' km' : Math.round(m / 10) * 10 + ' m'; }
-var STATE_TXT = { lucid: 'lucid', feverish: 'feverish', delirious: 'delirious' };
 var STATE_COL = { lucid: 'var(--lucid)', feverish: 'var(--fever)', delirious: 'var(--delir)' };
 var CONF_TXT = { textual: 'textual', traditional: 'traditional', conjectural: 'conjectural' };
 
@@ -784,9 +781,6 @@ function renderPanel(e) {
   if (e.who === 'S') fact('Who', 'Svidrigailov, not Raskolnikov');
   if (e.len) fact('Walk', fmtM(e.len) + (e.rc === 'inferred' ? ' · route inferred (dashed)' : ' · streets given by the text'));
   else fact('Walk', e.loc === 'siberia' ? 'off the map' : 'stays put');
-  var stEl = document.createElement('span'); stEl.className = 'state'; stEl.innerHTML = '<i class="dot"></i><span></span>';
-  stEl.querySelector('.dot').style.background = STATE_COL[e.state]; stEl.querySelector('span').textContent = STATE_TXT[e.state] + ' (my reading)';
-  fact('State', stEl);
   fact('The text', typo(l.text));
   $('pl-note').textContent = typo(l.note);
   $('panel-scroll').scrollTop = 0;
