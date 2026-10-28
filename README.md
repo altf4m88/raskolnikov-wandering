@@ -2,6 +2,8 @@
 
 **Raskolnikov Wandering**: a 3D, scene-by-scene map of Raskolnikov's walks in Dostoevsky's *Crime and Punishment* (1866), laid over the real street plan of St Petersburg.
 
+Designed and developed by **@altf4m8** ([Instagram](https://instagram.com/altf4m8) · [GitHub](https://github.com/altf4m88)).
+
 Open `index.html` in a browser. It is a single file. It needs a network connection for three.js (jsDelivr) and Google Fonts.
 
 ## What it shows
@@ -13,7 +15,7 @@ Open `index.html` in a browser. It is a single file. It needs a network connecti
 - **A confidence chip on every place:** *textual* (named in the novel), *traditional* (an initial such as "K—— Bridge" that local tradition has resolved), or *conjectural* (my own guess, with the reasoning given).
 - **Measurements that test the text,** for example the famous "seven hundred and thirty" paces from the garret to the pawnbroker's.
 
-Controls: drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom. ←/→ step through scenes, space plays. At 1× each scene stays on screen about as long as it takes to read its card (roughly 190 words a minute), and the walk is stretched to match; ½× and 2× are on the speed button. Links like `index.html#e13` or `#day-9` open a given scene or day.
+On a first visit a short introduction plays (skip it any time, or press Esc); **About this map → Replay the introduction** brings it back. Controls: drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom. ←/→ step through scenes, space plays. At 1× each scene stays on screen about as long as it takes to read its card (roughly 190 words a minute), and the walk is stretched to match; ½× and 2× are on the speed button. Links like `index.html#e13` or `#day-9` open a given scene or day.
 
 ## What is not certain
 
