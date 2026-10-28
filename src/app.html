@@ -63,6 +63,8 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 #panel { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: var(--gutter-r); width: var(--panel-w); bottom: calc(var(--tl-h) + 26px + env(safe-area-inset-bottom, 0px)); background: var(--paper-glass); border: 1px solid var(--rule); box-shadow: 0 10px 40px -18px rgba(34,24,14,.55); display: flex; flex-direction: column; min-height: 0; }
 #panel .scroll { overflow-y: auto; padding: 18px 22px 22px; min-height: 0; flex: 1; overscroll-behavior: contain; }
 .handle { display: none; }
+.prog { height: 3px; background: rgba(34,24,14,.08); flex: none; }
+.prog i { display: block; height: 100%; width: 0; background: var(--blood); }
 .eyebrow { font: 11.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .eyebrow b { font-weight: 400; color: var(--blood); }
 #ev-title { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.08; margin: 8px 0 10px; text-wrap: balance; }
@@ -208,6 +210,7 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
   </nav>
 
   <aside id="panel" aria-label="Scene">
+    <div class="prog" id="prog" hidden title="Time left on this scene; playback waits long enough to read the card"><i id="prog-i"></i></div>
     <button class="handle" id="handle" aria-label="Expand or collapse the scene card"></button>
     <div class="scroll" id="panel-scroll">
       <div class="eyebrow"><b id="ev-day">Day 1</b><span id="ev-dname"></span><span id="ev-clock"></span></div>
@@ -241,7 +244,7 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
       <button class="ibtn" id="b-prev" aria-label="Previous scene"><svg viewBox="0 0 16 16"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg></button>
       <button class="ibtn play" id="b-play" aria-label="Play"><svg viewBox="0 0 16 16" id="i-play"><path d="M4 2l10 6-10 6z"/></svg></button>
       <button class="ibtn" id="b-next" aria-label="Next scene"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
-      <button class="speed" id="b-speed" title="Walking speed">1×</button>
+      <button class="speed" id="b-speed" title="Playback speed. At 1× each scene stays up about as long as it takes to read.">1×</button>
     </div>
     <div class="days-wrap" id="days-wrap"><div class="days" id="days"></div></div>
     <div class="tl-legend" aria-hidden="true">
@@ -568,7 +571,7 @@ function buildRoutes() {
     var pts = [], cum = [0];
     for (var j = 0; j < r.length; j += 2) pts.push(new THREE.Vector3(r[j], 0, -r[j + 1]));
     for (var k = 1; k < pts.length; k++) cum.push(cum[k - 1] + pts[k].distanceTo(pts[k - 1]));
-    routeObjs[e.id] = { line: line, pts: pts, cum: cum, total: cum[cum.length - 1] };
+    routeObjs[e.id] = { line: line, pts: pts, cum: cum, total: cum[cum.length - 1], orig: Float32Array.from(geo.attributes.instanceStart.data.array), mod: -1 };
   });
 }
 var activeTrail = null;
@@ -878,7 +881,7 @@ function styleRoutes() {
     else if (showAll) { vis = true; m = dash ? matAllDash : matAll; }
     o.line.visible = vis; if (m) o.line.material = m;
     o.line.renderOrder = e === cur ? 6 : 2;
-    o.line.geometry.instanceCount = Infinity;
+    fullTrail(o);
   });
 }
 
@@ -912,30 +915,80 @@ function flyTo(fr, dur) {
 function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 
 // ---------- walking ----------
-var walk = null, follow = true, dwellUntil = 0;
+// A walk lasts roughly as long as reading its card, so the figure never races ahead of the
+// text: short errands stroll, the long crossings of the city take longer, within bounds.
+var walk = null, scene0 = 0, sceneDur = 0;
+var aheadLine = null, aheadMat = mkLineMat(C.blood, 2.2, true, 0.42), aheadMatS = mkLineMat(C.slate, 2.2, true, 0.42);
+aheadMat.depthTest = false; aheadMatS.depthTest = false;
+function readMs(e) {
+  var words = [e.title, e.sum, e.q, e.tn || '', e.note_light || ''].join(' ').split(/\s+/).length;
+  return (words / 3.2 + 3) * 1000; // about 190 words a minute, plus a breath
+}
+function walkMs(e, o) {
+  var f = Math.min(1.6, Math.max(0.5, 0.45 + o.total / 4000));
+  return Math.min(50000, Math.max(7000, readMs(e) * f));
+}
 function startWalk(e) {
   var o = routeObjs[e.id];
   walker.visible = e.loc !== 'siberia' && e.who === 'R';
   svidWalker.visible = false;
   var w = e.who === 'S' ? svidWalker : walker;
   if (e.who === 'S') { scene.add(svidWalker); svidWalker.visible = true; walker.visible = false; }
+  if (aheadLine) { scene.remove(aheadLine); aheadLine.geometry.dispose(); aheadLine = null; }
   if (!o) {
     var l = LOC[e.loc]; if (l && e.loc !== 'siberia') w.position.set(l.p[0], 0, -l.p[1]);
     walk = null; return;
   }
-  var secs = Math.min(16, Math.max(2.4, o.total / 420)) / speed;
-  if (REDUCED) { placeAt(w, o, 1); o.line.geometry.instanceCount = Infinity; walk = null; return; }
-  walk = { o: o, w: w, t0: performance.now(), dur: secs * 1000, e: e };
+  if (REDUCED) { placeAt(w, o, 1); fullTrail(o); walk = null; return; }
+  // the road ahead, faint and dashed, so you can see where he is going
+  var pos = []; o.pts.forEach(function (p) { pos.push(p.x, 2.1, p.z); });
+  var g = new THREE.LineGeometry(); g.setPositions(pos);
+  aheadLine = new THREE.Line2(g, e.who === 'S' ? aheadMatS : aheadMat); aheadLine.computeLineDistances(); aheadLine.renderOrder = 5;
+  scene.add(aheadLine);
+  walk = { o: o, w: w, t0: performance.now(), dur: walkMs(e, o) / speed, e: e, heading: null, last: 0 };
   placeAt(w, o, 0);
 }
-function placeAt(w, o, f) {
-  var target = f * o.total, k = 1;
-  while (k < o.cum.length - 1 && o.cum[k] < target) k++;
+// trapezoid velocity: ease in, walk steadily, ease out; returns the fraction of the route covered
+function gait(f, dur) {
+  var a = Math.min(0.18, 1600 / dur);
+  if (f < a) return f * f / (2 * a * (1 - a));
+  if (f > 1 - a) return 1 - (1 - f) * (1 - f) / (2 * a * (1 - a));
+  return (f - a / 2) / (1 - a);
+}
+function pointAt(o, d) {
+  d = Math.max(0, Math.min(o.total, d));
+  var k = 1; while (k < o.cum.length - 1 && o.cum[k] < d) k++;
   var a = o.pts[k - 1], b = o.pts[k], seg = o.cum[k] - o.cum[k - 1] || 1;
-  var t = Math.min(1, Math.max(0, (target - o.cum[k - 1]) / seg));
-  w.position.lerpVectors(a, b, t);
-  var dx = b.x - a.x, dz = b.z - a.z; if (dx || dz) w.rotation.y = Math.atan2(dx, dz);
-  o.line.geometry.instanceCount = Math.max(1, k);
+  return { k: k, t: Math.min(1, Math.max(0, (d - o.cum[k - 1]) / seg)), a: a, b: b };
+}
+function setTrail(o, k, x, z) {
+  var attr = o.line.geometry.attributes.instanceStart, arr = attr.data.array, m;
+  if (o.mod >= 0 && o.mod !== k - 1) { m = o.mod * 6 + 3; arr[m] = o.orig[m]; arr[m + 1] = o.orig[m + 1]; arr[m + 2] = o.orig[m + 2]; }
+  m = (k - 1) * 6 + 3; arr[m] = x; arr[m + 1] = o.orig[m + 1]; arr[m + 2] = z;
+  o.mod = k - 1; attr.data.needsUpdate = true;
+  o.line.geometry.instanceCount = k;
+}
+function fullTrail(o) {
+  if (o.mod >= 0) {
+    var attr = o.line.geometry.attributes.instanceStart, arr = attr.data.array, m = o.mod * 6 + 3;
+    arr[m] = o.orig[m]; arr[m + 1] = o.orig[m + 1]; arr[m + 2] = o.orig[m + 2]; o.mod = -1; attr.data.needsUpdate = true;
+  }
+  o.line.geometry.instanceCount = Infinity;
+}
+function wrapAngle(a) { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; }
+function placeAt(w, o, f, dt) {
+  var d = f * o.total, p = pointAt(o, d);
+  w.position.lerpVectors(p.a, p.b, p.t);
+  setTrail(o, p.k, w.position.x, w.position.z);
+  // face a point a little way ahead and turn towards it gradually
+  var ah = pointAt(o, d + 14), ax = ah.a.x + (ah.b.x - ah.a.x) * ah.t, az = ah.a.z + (ah.b.z - ah.a.z) * ah.t;
+  var dx = ax - w.position.x, dz = az - w.position.z;
+  if (dx * dx + dz * dz > 0.01) {
+    var want = Math.atan2(dx, dz);
+    if (!dt || (walk && walk.heading == null)) w.rotation.y = want;
+    else w.rotation.y += wrapAngle(want - w.rotation.y) * (1 - Math.exp(-dt * 7));
+    if (walk) walk.heading = w.rotation.y;
+  }
   return w.position;
 }
 
@@ -962,10 +1015,10 @@ function select(id, opts) {
   $('siberia').hidden = e.loc !== 'siberia'; arrow.visible = e.loc === 'siberia'; chromeCache = null;
   ghost.visible = true;
   // camera + walk
-  follow = true;
-  flyTo(frameFor(e), opts.instant ? 0 : 1500);
+  flyTo(frameFor(e), opts.instant ? 0 : 1800);
   startWalk(e);
-  dwellUntil = 0;
+  scene0 = performance.now();
+  sceneDur = Math.max((walk ? walk.dur : 0) + 3500 / speed, readMs(e) / speed);
   try { history.replaceState(null, '', '#' + e.id); } catch (err) { }
 }
 function step(dir) { var i = seq.indexOf(cur) + dir; if (i < 0 || i >= seq.length) return false; select(seq[i].id); return true; }
@@ -973,8 +1026,20 @@ function setPlayIcon() {
   $('b-play').setAttribute('aria-label', playing ? 'Pause' : 'Play');
   $('i-play').innerHTML = playing ? '<path d="M3 2h4v12H3zM9 2h4v12H9z"/>' : '<path d="M4 2l10 6-10 6z"/>';
 }
-function play() { if (seq.indexOf(cur) === seq.length - 1) select(seq[0].id); playing = true; setPlayIcon(); if (!walk) dwellUntil = performance.now() + 2600 / speed; }
-function stop() { playing = false; setPlayIcon(); }
+function play() {
+  if (seq.indexOf(cur) === seq.length - 1) select(seq[0].id);
+  playing = true; setPlayIcon();
+  // if this card has already been on screen long enough, move on after a short pause
+  var now = performance.now(); if (!walk && now - scene0 > sceneDur) scene0 = now - sceneDur + 1500;
+  $('prog').hidden = false;
+}
+function stop() { playing = false; setPlayIcon(); $('prog').hidden = true; }
+function setSpeed(v) {
+  var now = performance.now(), r = speed / v;
+  if (walk) { var f = (now - walk.t0) / walk.dur; walk.dur *= r; walk.t0 = now - f * walk.dur; }
+  var g = (now - scene0) / sceneDur; sceneDur *= r; scene0 = now - g * sceneDur;
+  speed = v; $('b-speed').textContent = (v === 0.5 ? '½' : v) + '×';
+}
 
 // ---------- UI wiring ----------
 $('b-prev').onclick = function () { stop(); step(-1); };
@@ -982,7 +1047,7 @@ $('b-next').onclick = function () { stop(); step(1); };
 $('p-prev').onclick = function () { stop(); step(-1); };
 $('p-next').onclick = function () { stop(); step(1); };
 $('b-play').onclick = function () { playing ? stop() : play(); };
-$('b-speed').onclick = function () { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; this.textContent = speed + '×'; };
+$('b-speed').onclick = function () { setSpeed(speed === 1 ? 2 : speed === 2 ? 0.5 : 1); };
 $('t-all').onclick = function () { showAll = !showAll; this.setAttribute('aria-pressed', showAll); styleRoutes(); };
 $('t-svid').onclick = function () {
   showSvid = !showSvid; this.setAttribute('aria-pressed', showSvid);
@@ -1003,7 +1068,7 @@ window.addEventListener('keydown', function (ev) {
   else if (ev.key === 'ArrowLeft') { stop(); step(-1); ev.preventDefault(); }
   else if (ev.key === ' ' && tag !== 'BUTTON') { playing ? stop() : play(); ev.preventDefault(); }
 });
-controls.addEventListener('start', function () { follow = false; flight = null; });
+controls.addEventListener('start', function () { flight = null; });
 window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h && (!cur || h !== cur.id)) routeHash(h); });
 function routeHash(h) {
   var m = /^day-(\d+)$/.exec(h);
@@ -1041,20 +1106,23 @@ function frame(now) {
     var bl = blendSky(skyFrom, skyTo, ease(skyT));
     lightNow = bl; setLight(lightTarget, bl);
   } else if (!lightNow && skyTo) { lightNow = skyTo; setLight(lightTarget, skyTo); }
-  if (walk) {
-    var f = Math.min(1, (now - walk.t0) / walk.dur);
-    var fe = f < 0.08 ? f * f / 0.16 : f > 0.92 ? 1 - (1 - f) * (1 - f) / 0.16 : f;
-    var p = placeAt(walk.w, walk.o, Math.min(1, fe));
-    if (f >= 1) { walk.o.line.geometry.instanceCount = Infinity; walk = null; if (playing) dwellUntil = now + (3200 + cur.q.length * 18) / speed; }
-  } else if (playing && dwellUntil && now > dwellUntil) {
-    dwellUntil = 0;
-    if (!step(1)) stop();
-    else if (!walk) dwellUntil = performance.now() + (3600 + cur.q.length * 18) / speed;
-  }
-  // walker bob and visibility scale
   var camD = camera.position.distanceTo(controls.target);
   var wsc = Math.max(1, Math.min(9, camD / 380));
   walker.scale.setScalar(wsc); svidWalker.scale.setScalar(wsc);
+  if (walk) {
+    var f = Math.min(1, (now - walk.t0) / walk.dur);
+    var s = gait(f, walk.dur), w = walk.w;
+    placeAt(w, walk.o, s, dt);
+    // a slight step and sway while moving
+    var v = Math.abs(s - walk.last) / Math.max(dt, 1e-3); walk.last = s;
+    var moving = Math.min(1, v * walk.dur / 1000);
+    w.position.y = Math.abs(Math.sin(now / 1000 * Math.PI * 1.7)) * 0.45 * wsc * moving;
+    w.rotation.z = Math.sin(now / 1000 * Math.PI * 1.7) * 0.05 * moving;
+    if (f >= 1) { fullTrail(walk.o); w.position.y = 0; w.rotation.z = 0; walk = null; if (aheadLine) aheadLine.visible = false; }
+  } else if (playing && now - scene0 > sceneDur) {
+    if (!step(1)) stop();
+  }
+  if (playing) $('prog-i').style.width = (Math.min(1, (now - scene0) / sceneDur) * 100).toFixed(2) + '%';
   var pulse = 1 + Math.sin(now / 380) * 0.08;
   if (cur && locMeshes[cur.loc]) locMeshes[cur.loc].userData.ring.scale.setScalar(pulse);
   // shadows follow the view

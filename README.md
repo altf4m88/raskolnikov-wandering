@@ -7,13 +7,13 @@ Open `index.html` in a browser. It is a single file. It needs a network connecti
 ## What it shows
 
 - **53 scenes over about 14 days, plus the Epilogue.** Each scene has its Part and chapter, an approximate clock time, a place, a summary, and one quotation from Constance Garnett's 1914 translation. Every quotation is machine-checked word for word against the Project Gutenberg text.
-- **Routes along real streets.** Walks between scenes are routed over an OpenStreetMap street graph. Solid lines mean the text gives or forces the streets; dashed lines are routes I inferred.
+- **Routes along real streets.** Walks between scenes are routed over an OpenStreetMap street graph. Waypoints snap onto the nearest street segment, and the build removes out-and-back hops and rounds the corners. Solid lines mean the text gives or forces the streets; dashed lines are routes I inferred.
 - **A sky for each scene.** Lighting is computed for 59.93° N on the scene's date, in local mean time. "Early July" in the novel is Old Style, which is the second half of July by our calendar.
 - **Svidrigailov's last night** as an optional second track.
 - **A confidence chip on every place:** *textual* (named in the novel), *traditional* (an initial such as "K—— Bridge" that local tradition has resolved), or *conjectural* (my own guess, with the reasoning given).
 - **Measurements that test the text,** for example the famous "seven hundred and thirty" paces from the garret to the pawnbroker's.
 
-Controls: drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom. ←/→ step through scenes, space plays. Links like `index.html#e13` or `#day-9` open a given scene or day.
+Controls: drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom. ←/→ step through scenes, space plays. At 1× each scene stays on screen about as long as it takes to read its card (roughly 190 words a minute), and the walk is stretched to match; ½× and 2× are on the speed button. Links like `index.html#e13` or `#day-9` open a given scene or day.
 
 ## What is not certain
 
