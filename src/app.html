@@ -157,6 +157,36 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
 #about a { color: var(--blood); }
 .legend-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 6px 0; }
 
+/* ---------- introduction ---------- */
+#intro { position: absolute; inset: 0; z-index: 15; display: flex; align-items: flex-end; pointer-events: none;
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) var(--gutter-r) calc(env(safe-area-inset-bottom, 0px) + 28px) var(--gutter-l);
+  background: linear-gradient(to top right, rgba(236,223,184,.94) 0%, rgba(236,223,184,.6) 34%, rgba(236,223,184,0) 66%); }
+.intro-skip { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: var(--gutter-r); pointer-events: auto; }
+.intro-card { pointer-events: auto; width: 100%; max-width: 580px; background: var(--paper-glass); border: 1px solid var(--ink); padding: 24px 28px 18px; box-shadow: 0 18px 60px -24px rgba(34,24,14,.6); }
+.intro-dots { display: flex; gap: 6px; margin-bottom: 14px; }
+.intro-dots i { width: 22px; height: 3px; background: rgba(34,24,14,.18); }
+.intro-dots i.on { background: var(--blood); }
+.intro-eyebrow { font: 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--blood); }
+.slide h2 { font: 400 clamp(28px, 3.4vw, 42px)/1.04 var(--display); margin: 8px 0 14px; text-wrap: balance; }
+.slide p { margin: 0 0 10px; font-size: 16px; max-width: 60ch; }
+.slide blockquote { font-size: 19px; margin-top: 4px; }
+.slide:not([hidden]) { animation: slideIn .55s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.intro-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 14.5px; }
+.intro-legend li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.intro-legend .chip { flex: none; }
+.ln { display: inline-block; width: 28px; height: 3px; flex: none; }
+.ln.solid { background: var(--blood); }
+.ln.dash { background: repeating-linear-gradient(90deg, var(--blood) 0 7px, transparent 7px 11px); }
+.intro-go { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.go { font: 14px/1 var(--mono); letter-spacing: .03em; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); padding: 12px 18px; border-radius: 2px; cursor: pointer; }
+.go:hover { background: var(--blood); border-color: var(--blood); }
+.intro-nav { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+.intro-prog { flex: 1; height: 3px; background: rgba(34,24,14,.1); }
+.intro-prog i { display: block; height: 100%; width: 0; background: var(--ink-3); }
+.mast .readout, #panel, #tools, #timeline { transition: opacity .6s ease, visibility .6s; }
+body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.intro-on #timeline, body.intro-on #siberia { opacity: 0; visibility: hidden; }
+
 /* ---------- loading ---------- */
 #loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--paper); z-index: 30; text-align: center; padding: 16px; }
 #loading h2 { font: 400 34px/1.05 var(--display); margin: 0 0 8px; }
@@ -186,8 +216,12 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
   .ibtn { width: 34px; height: 34px; } .ibtn.play { width: 40px; height: 40px; }
   #siberia { right: var(--gutter-r); left: var(--gutter-l); top: 18%; max-width: none; }
   #about .sheet { padding: 22px 18px; }
+  #intro { padding-top: calc(env(safe-area-inset-top, 0px) + 96px); background: linear-gradient(to top, rgba(236,223,184,.95) 0%, rgba(236,223,184,.5) 45%, rgba(236,223,184,0) 75%); }
+  .intro-card { padding: 18px 18px 14px; }
+  .slide p { font-size: 15px; }
+  .slide blockquote { font-size: 17px; }
 }
-@media (prefers-reduced-motion: reduce) { .tick::after { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .tick::after { transition: none; } .slide:not([hidden]) { animation: none; } }
 </style>
 <!--/head-->
 <div id="app">
@@ -260,6 +294,8 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
       <h2 id="about-h">About this map</h2>
       <p>Raskolnikov's walks in <i>Crime and Punishment</i>, scene by scene, over today's street plan of St Petersburg. Every quotation is checked word for word against Constance Garnett's 1914 translation. Every placename is checked against the Russian.</p>
 
+      <p><button class="tbtn" id="replay-intro">Replay the introduction</button></p>
+
       <h3>How to read it</h3>
       <div class="legend-row"><span class="chip textual" style="position:static">textual</span> the novel names the place outright.</div>
       <div class="legend-row"><span class="chip traditional" style="position:static">traditional</span> the novel hides it behind an initial ("S—— Lane", "K—— Bridge") and local tradition has filled in the address.</div>
@@ -298,6 +334,47 @@ blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
         <li>Address traditions: <a href="https://peterburg2.ru/articles/marshrut-po-peterburgu-adresa-geroev-romana-prestuplenie-i-nakazanie-231759.html" target="_blank" rel="noopener">peterburg2.ru</a>, <a href="https://www.vokrugsveta.ru/articles/mesto-prestupleniya-i-nakazaniya-izmenit-nelzya-gde-snimali-novyi-serial-po-romanu-fedora-dostoevskogo-id5955567/" target="_blank" rel="noopener">Vokrug Sveta</a>, and the KudaGo Dostoevsky list. All are popular guides; none is a critical edition.</li>
         <li>Rendering: three.js r147.</li>
       </ul>
+
+      <h3>Credits</h3>
+      <p>Designed and developed by <b>@altf4m8</b>: <a href="https://instagram.com/altf4m8" target="_blank" rel="noopener">Instagram</a> · <a href="https://github.com/altf4m88" target="_blank" rel="noopener">GitHub</a>.</p>
+    </div>
+  </div>
+
+  <div id="intro" hidden role="dialog" aria-modal="false" aria-labelledby="intro-h">
+    <button class="tbtn intro-skip" id="intro-skip">Skip intro</button>
+    <div class="intro-card">
+      <div class="intro-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <section class="slide">
+        <div class="intro-eyebrow">Crime and Punishment · Part I, chapter 1</div>
+        <h2 id="intro-h">St Petersburg, July 1865</h2>
+        <blockquote>The heat in the street was terrible: and the airlessness, the bustle and the plaster, scaffolding, bricks, and dust all about him, and that special Petersburg stench…</blockquote>
+        <div class="qref">tr. Constance Garnett</div>
+      </section>
+      <section class="slide" hidden>
+        <div class="intro-eyebrow">The walker</div>
+        <h2>A former student, a garret, an idea</h2>
+        <p>Rodion Raskolnikov is twenty-three, penniless, and lodges in a room off the Hay Market that is “more like a cupboard than a room”. For a month he has been rehearsing a crime in his head.</p>
+        <p>Over fourteen days he walks these streets: to a pawnbroker’s flat, down into taverns, across the bridges and out to the islands, to the police office, and to Sonia.</p>
+      </section>
+      <section class="slide" hidden>
+        <div class="intro-eyebrow">How to read this map</div>
+        <h2>Every place says how sure it is</h2>
+        <ul class="intro-legend">
+          <li><span class="chip textual">textual</span>named in the novel</li>
+          <li><span class="chip traditional">traditional</span>an initial (“K—— Bridge”) that local tradition has filled in</li>
+          <li><span class="chip conjectural">conjectural</span>a guess, and the scene card says why</li>
+          <li><span class="ln solid"></span>streets the text gives<span class="ln dash"></span>routes inferred</li>
+          <li>The sky is computed for each scene’s hour. Every quotation is Garnett’s 1914 translation, checked word for word.</li>
+        </ul>
+        <div class="intro-go">
+          <button class="go" id="intro-begin">Begin the walk</button>
+          <button class="tbtn" id="intro-explore">Explore on my own</button>
+        </div>
+      </section>
+      <div class="intro-nav" id="intro-nav">
+        <div class="intro-prog" aria-hidden="true"><i id="intro-prog-i"></i></div>
+        <button class="tbtn" id="intro-next">Next →</button>
+      </div>
     </div>
   </div>
 
@@ -694,6 +771,7 @@ function chromeRects() {
 var labelsOn = true, dayLocs = {}, endLocs = {};
 function hideLabel(o) { if (o.show) { o.el.style.display = 'none'; o.show = false; } }
 function updateLabels() {
+  if (intro || !cur) { labels.forEach(hideLabel); return; }
   var w = canvas.clientWidth, h = canvas.clientHeight;
   var camDist = camera.position.distanceTo(controls.target);
   var cand = [];
@@ -990,6 +1068,7 @@ function placeAt(w, o, f, dt) {
 function select(id, opts) {
   opts = opts || {};
   var e = EV.filter(function (x) { return x.id === id; })[0]; if (!e) return;
+  if (intro) { intro = null; markIntroSeen(); $('intro').hidden = true; document.body.classList.remove('intro-on'); chromeCache = null; }
   if (e.who === 'S' && !showSvid) { showSvid = true; $('t-svid').setAttribute('aria-pressed', 'true'); rebuildSeq(); buildTimeline(); }
   cur = e; curIdx = seq.indexOf(e);
   // day locations for labels
@@ -1046,6 +1125,7 @@ $('t-all').onclick = function () { showAll = !showAll; this.setAttribute('aria-p
 $('t-svid').onclick = function () {
   showSvid = !showSvid; this.setAttribute('aria-pressed', showSvid);
   rebuildSeq(); buildTimeline();
+  if (!cur) return;
   if (cur.who === 'S' && !showSvid) select('e42'); else { markTimeline(); styleRoutes(); }
 };
 $('t-lbl').onclick = function () { labelsOn = !labelsOn; this.setAttribute('aria-pressed', labelsOn); };
@@ -1057,12 +1137,92 @@ var sheetOpen = false;
 $('handle').onclick = function () { sheetOpen = !sheetOpen; document.documentElement.style.setProperty('--sheet-h', sheetOpen ? '62vh' : '190px'); chromeCache = null; };
 window.addEventListener('keydown', function (ev) {
   if (!$('about').hidden) { if (ev.key === 'Escape') openAbout(false); return; }
+  if (intro) {
+    if (ev.key === 'Escape') { endIntro(false); ev.preventDefault(); }
+    else if (ev.key === 'ArrowRight' && intro.k < 2) { showSlide(intro.k + 1); ev.preventDefault(); }
+    else if (ev.key === 'ArrowLeft' && intro.k > 0) { showSlide(intro.k - 1); ev.preventDefault(); }
+    return;
+  }
   var tag = (ev.target && ev.target.tagName) || '';
   if (ev.key === 'ArrowRight') { stop(); step(1); ev.preventDefault(); }
   else if (ev.key === 'ArrowLeft') { stop(); step(-1); ev.preventDefault(); }
   else if (ev.key === ' ' && tag !== 'BUTTON') { playing ? stop() : play(); ev.preventDefault(); }
 });
-controls.addEventListener('start', function () { flight = null; });
+controls.addEventListener('start', function () { flight = null; if (intro) intro.user = true; });
+
+// ---------- introduction ----------
+// Three short cards over the city while the camera comes down from the Neva to the garret.
+// Shown on a first visit only (remembered in this browser); About can replay it.
+var intro = null, INTRO_KEY = 'rw-intro-seen';
+function introSeen() { try { return localStorage.getItem(INTRO_KEY) === '1'; } catch (e) { return false; } }
+function markIntroSeen() { try { localStorage.setItem(INTRO_KEY, '1'); } catch (e) { } }
+function introKey(k) {
+  var hm = LOC.haymarket.p, ga = LOC.garret.p;
+  return [
+    // looking west from above the Admiralty side, so the edge of the mapped area stays out of view
+    { t: new THREE.Vector3((EXT[0] + EXT[2]) / 2 - 200, 0, -(EXT[1] + EXT[3]) / 2 + 500), d: 4600, pol: 0.82, az: 1.35 },
+    { t: new THREE.Vector3(hm[0] - 250, 0, -hm[1] - 120), d: 2500, pol: 0.88, az: 0.95 },
+    { t: new THREE.Vector3(ga[0] - 120, 0, -ga[1] + 60), d: 1350, pol: 0.94, az: 0.22 }
+  ][k];
+}
+function camState() {
+  var off = camera.position.clone().sub(controls.target), d = off.length();
+  return { t: controls.target.clone(), d: d, pol: Math.acos(Math.max(-1, Math.min(1, off.y / d))), az: Math.atan2(off.x, off.z) };
+}
+function setCam(T, D, PO, AZ) {
+  controls.target.copy(T);
+  camera.position.set(T.x + Math.sin(AZ) * Math.sin(PO) * D, Math.cos(PO) * D, T.z + Math.cos(AZ) * Math.sin(PO) * D);
+}
+function showSlide(k) {
+  intro.k = k; intro.t0 = performance.now(); intro.from = camState();
+  var slides = document.querySelectorAll('#intro .slide');
+  slides.forEach(function (sl, i) { sl.hidden = i !== k; });
+  document.querySelectorAll('#intro .intro-dots i').forEach(function (d, i) { d.classList.toggle('on', i <= k); });
+  var lastCard = k === slides.length - 1;
+  $('intro-nav').hidden = lastCard;
+  var words = slides[k].textContent.trim().split(/\s+/).length;
+  intro.dur = Math.max(7000, (words / 3.2 + 3) * 1000);
+  (lastCard ? $('intro-begin') : $('intro-next')).focus({ preventScroll: true });
+}
+function startIntro() {
+  stop(); walk = null;
+  if (aheadLine) aheadLine.visible = false;
+  Object.keys(routeObjs).forEach(function (id) { routeObjs[id].line.visible = false; });
+  walker.visible = false; svidWalker.visible = false;
+  $('siberia').hidden = true; arrow.visible = false;
+  var st = sunPos(1, '19:00'), k = skyAt(st.el);
+  skyFrom = lightNow || k; skyTo = k; skyT = lightNow ? 0 : 1; lightTarget = st; if (!lightNow) { lightNow = k; setLight(st, k); }
+  intro = { k: 0, t0: 0, dur: 0, from: null, user: false };
+  var k0 = introKey(0); setCam(k0.t, k0.d, k0.pol, k0.az); controls.update();
+  document.body.classList.add('intro-on');
+  $('intro').hidden = false;
+  showSlide(0);
+}
+function endIntro(begin) {
+  if (!intro) return;
+  intro = null; markIntroSeen();
+  $('intro').hidden = true; document.body.classList.remove('intro-on'); chromeCache = null;
+  select('e01');
+  if (begin) play();
+}
+function introFrame(now) {
+  var kf = introKey(intro.k), f = intro.from;
+  if (!intro.user) {
+    var e2 = REDUCED ? 1 : ease(Math.min(1, (now - intro.t0) / 4200));
+    var drift = REDUCED ? 0 : (now - intro.t0) / 1000 * 0.012;
+    setCam(f.t.clone().lerp(kf.t, e2), f.d + (kf.d - f.d) * e2, f.pol + (kf.pol - f.pol) * e2, f.az + wrapAngle(kf.az - f.az) * e2 + drift);
+  }
+  if (!$('intro-nav').hidden) {
+    var p = (now - intro.t0) / intro.dur;
+    $('intro-prog-i').style.width = (Math.min(1, p) * 100).toFixed(1) + '%';
+    if (p >= 1) showSlide(intro.k + 1);
+  }
+}
+$('intro-skip').onclick = function () { endIntro(false); };
+$('intro-explore').onclick = function () { endIntro(false); };
+$('intro-begin').onclick = function () { endIntro(true); };
+$('intro-next').onclick = function () { if (intro && intro.k < 2) showSlide(intro.k + 1); };
+$('replay-intro').onclick = function () { openAbout(false); startIntro(); };
 window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h && (!cur || h !== cur.id)) routeHash(h); });
 function routeHash(h) {
   var m = /^day-(\d+)$/.exec(h);
@@ -1089,6 +1249,7 @@ var last = performance.now();
 function frame(now) {
   requestAnimationFrame(frame);
   var dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (intro) introFrame(now);
   if (flight) {
     var t = Math.min(1, (now - flight.t0) / flight.dur), k = ease(t);
     controls.target.lerpVectors(flight.fromT, flight.toT, k);
@@ -1141,9 +1302,10 @@ function boot(state) {
       rebuildSeq(); buildTimeline();
       camera.position.set(-900, 1400, 1300); controls.target.set(-400, 0, 0);
       resize();
-      var start = (state && state.ev) || (location.hash && location.hash.slice(1)) || 'e01';
-      if (!routeHash(start)) select('e01', { instant: true });
-      else if (flight) { flyTo({ target: flight.toT, pos: flight.toP }, 0); flight = null; }
+      var start = (state && state.ev) || (location.hash && location.hash.slice(1));
+      if (start && routeHash(start)) { if (flight) { flyTo({ target: flight.toT, pos: flight.toP }, 0); flight = null; } }
+      else if (!introSeen()) startIntro();
+      else select('e01', { instant: true });
       $('loading').hidden = true;
       requestAnimationFrame(frame);
     } catch (err) {
