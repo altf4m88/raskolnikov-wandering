@@ -1,6 +1,7 @@
-"""Verify quotes against the Garnett text and compute street-following routes.
+"""Verify quotes against Garnett and Dostoevsky, and compute street-following routes.
 
-usage: python3 build_story.py data/story.json build/chapters.json build/graph.pkl data/map.json out.json
+usage: python3 build_story.py data/story.json cache/chapters.json cache/build/graph.pkl data/map.json out.json [cache/ru_chapters.json]
+The last argument is optional; without it the Russian quotes are not checked.
 """
 import sys, json, math, re, heapq, pickle
 
@@ -37,6 +38,32 @@ for e in story['events']:
     else:
         e['qref'] = hits[0].replace('E.', 'Ep.')
 print('quotes checked:', len(story['events']), 'missing:', bad)
+
+# ---------- Russian quotes: each segment must occur verbatim in Dostoevsky's text ----------
+if len(sys.argv) > 6:
+    def norm_ru(s):
+        s = s.replace('\u2014', '—').replace('\xa0', ' ')
+        return re.sub(r'\s+', ' ', s).strip()
+    ru_book = [(c['part'], c['ch'], norm_ru(c['text'])) for c in json.load(open(sys.argv[6]))]
+    rbad = 0
+    for e in story['events']:
+        if 'ru' not in e:
+            rbad += 1
+            print('NO RUSSIAN', e['id'])
+            continue
+        segs = e['ru'] if isinstance(e['ru'], list) else [e['ru']]
+        refs = []
+        for seg in segs:
+            hits = [f"{p}.{ROMAN.get(c, c)}" for p, c, t in ru_book if norm_ru(seg) in t]
+            if not hits:
+                rbad += 1
+                print('RUSSIAN NOT FOUND', e['id'], '|', seg[:80])
+            refs += hits[:1]
+        if refs:
+            e['ruref'] = refs[0].replace('E.', 'Ep.')
+            if e.get('qref') and e['ruref'] != e['qref']:
+                print('WARN chapter differs', e['id'], e['qref'], e['ruref'])
+    print('russian quotes checked:', len(story['events']), 'missing:', rbad)
 
 # ---------- routing ----------
 adj, gnodes = G['adj'], G['nodes']

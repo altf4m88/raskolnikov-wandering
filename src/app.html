@@ -79,6 +79,8 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 #ev-sum { margin: 12px 0 0; }
 blockquote { margin: 16px 0 0; padding: 2px 0 2px 16px; border-left: 3px solid var(--ochre); font-style: italic; font-size: 16.5px; line-height: 1.45; color: var(--ink); }
 blockquote::before { content: "\201C"; } blockquote::after { content: "\201D"; }
+blockquote.ru { margin-top: 12px; border-left-color: var(--rule); font-size: 15px; color: var(--ink-2); }
+blockquote.ru::before, blockquote.ru::after { content: none; }
 .qref { font: 11.5px/1.4 var(--mono); color: var(--ink-3); margin: 6px 0 0 19px; }
 .note { margin-top: 14px; padding: 10px 12px; background: rgba(184,135,28,.12); border: 1px solid rgba(184,135,28,.35); font-size: 14px; }
 .note h3, .measure h3, .facts h3 { margin: 0 0 4px; font: 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); font-weight: 400; }
@@ -258,6 +260,8 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
       <p id="ev-sum"></p>
       <blockquote id="ev-q"></blockquote>
       <div class="qref" id="ev-qref"></div>
+      <blockquote class="ru" id="ev-ru" lang="ru"></blockquote>
+      <div class="qref" id="ev-ruref"></div>
       <div id="ev-extra"></div>
       <dl class="facts" id="ev-facts"></dl>
       <p class="pnote" id="pl-note"></p>
@@ -339,6 +343,8 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
         <li>"That's in Voskresensky": the Russian is <i>на Вознесенском</i>, Voznesensky Prospekt.</li>
         <li>"Third Street in Vassilyevsky Island": the Russian is <i>в Третьей линии, на Малом проспекте</i>, the Third Line at Maly Prospekt.</li>
         <li>Katerina Ivanovna's last cry, <i>«Уездили клячу!»</i> ("they've driven the nag to death"), becomes "I am done for", and the echo of the mare dream is lost.</li>
+        <li>Clock times: Russian counts the hour in progress. <i>«во втором часу»</i> is between one and two, and <i>«часу в седьмом»</i> between six and seven; Garnett rounds them up to "two o'clock" and "about seven". The scenes here use the Russian.</li>
+        <li>Svidrigailov's sentry speaks in a caricatured Jewish accent in the Russian (<i>«А-зе здеся нельзя, здеся не места!»</i>), part of a stereotyped portrait; Garnett puts the line into plain English.</li>
       </ul>
 
       <h3>Sources</h3>
@@ -363,6 +369,8 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
         <h2 id="intro-h">St Petersburg, July 1865</h2>
         <blockquote>The heat in the street was terrible: and the airlessness, the bustle and the plaster, scaffolding, bricks, and dust all about him, and that special Petersburg stench…</blockquote>
         <div class="qref">tr. Constance Garnett</div>
+        <blockquote class="ru" lang="ru">На улице жара стояла страшная, к тому же духота, толкотня, всюду известка, леса, кирпич, пыль и та особенная летняя вонь…</blockquote>
+        <div class="qref">Dostoevsky, 1866</div>
       </section>
       <section class="slide" hidden>
         <div class="intro-eyebrow">The walker</div>
@@ -857,6 +865,9 @@ function renderPanel(e) {
   $('ev-sum').textContent = typo(e.sum);
   $('ev-q').textContent = typo(e.q, true);
   $('ev-qref').textContent = (e.qref ? partLabel(e.qref.replace('Ep.', 'Ep.')) : '') + ' · tr. Constance Garnett';
+  var ru = e.ru ? (Array.isArray(e.ru) ? e.ru.join(' … ') : e.ru) : '';
+  $('ev-ru').textContent = ru; $('ev-ru').hidden = !ru;
+  $('ev-ruref').textContent = ru ? (e.ruref ? partLabel(e.ruref) + ' · ' : '') + 'Dostoevsky, 1866' : '';
   var ex = $('ev-extra'); ex.innerHTML = '';
   if (e.tn) { var n = document.createElement('div'); n.className = 'note tn'; n.innerHTML = '<h3>Garnett against the Russian</h3>'; var p = document.createElement('div'); p.textContent = typo(e.tn); n.appendChild(p); ex.appendChild(n); }
   if (e.note_light) { var n2 = document.createElement('div'); n2.className = 'note'; n2.innerHTML = '<h3>Checking the sky</h3>'; var p2 = document.createElement('div'); p2.textContent = e.note_light; n2.appendChild(p2); ex.appendChild(n2); }
