@@ -14,6 +14,8 @@ Open `index.html` in a browser. It is a single file. It needs a network connecti
 - **Svidrigailov's last night** as an optional second track.
 - **A confidence chip on every place:** *textual* (named in the novel), *traditional* (an initial such as "K—— Bridge" that local tradition has resolved), or *conjectural* (my own guess, with the reasoning given).
 - **Measurements that test the text,** for example the famous "seven hundred and thirty" paces from the garret to the pawnbroker's.
+- **The 1868 plan:** M. I. Musnitsky's engraved *Plan of St Petersburg* (1868, public domain), warped onto the map. Its surveys date from 1867–68, two or three years after the novel's summer. A slider fades it against today's water. Fitted against OpenStreetMap, a patch left out of the fit lands about 9 m off (RMS), so it can tell you which street or bank, not which house. The image is a separate file (`assets/plan-1868.jpg`), so it needs the page served over HTTP; opened from disk, the button explains why it can't load.
+- **Places & distances:** every place in order of appearance, with each scene set there, and how far he walks. That is about 48.5 km over the fourteen days, 18.0 km of it on streets the text gives, with a per-day chart and table. Every figure is a floor: walks run pin to pin along today's streets, and the novel's hours of aimless wandering can't be measured.
 
 On a first visit a short introduction plays (skip it any time, or press Esc); **About this map → Replay the introduction** brings it back. Controls: drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom. ←/→ step through scenes, space plays. At 1× each scene stays on screen about as long as it takes to read its card (roughly 190 words a minute), and the walk is stretched to match; ½× and 2× are on the speed button. Links like `index.html#e13` or `#day-9` open a given scene or day.
 
@@ -62,7 +64,20 @@ tools/text.py         Gutenberg #2554 split into 41 chapters -> cache/chapters.j
 tools/build_map.py    land/water/parks/bridges/buildings + walking graph -> data/map.json
 tools/build_story.py  checks quotes, routes every walk, measures them -> data/story.built.json
 tools/bundle.py       packs everything into src/app.html -> index.html (+ csp.txt for the container)
+tools/georef_plan.py  warps the 1868 plan onto the map extent -> assets/plan-1868.jpg
 ```
+
+The plan overlay is built separately and committed, because it needs the plan image. Wikimedia only serves scripts standard thumbnail sizes, so it uses the 3,840 px rendition (a quarter of the original scan):
+
+```bash
+curl -A "your-contact-here" -o cache/plan-3840.jpg "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Plan_of_Saint-Petersburg_by_Musnitsky%2C_1868.jpg/3840px-Plan_of_Saint-Petersburg_by_Musnitsky%2C_1868.jpg"
+```
+
+```bash
+python3 -I tools/georef_plan.py cache/plan-3840.jpg data/plan_gcp.json data/map.json assets/plan-1868.jpg
+```
+
+`data/plan_gcp.json` holds 22 hand-picked seed points. The script then matches about 150 patches of the plan's streets and water against OpenStreetMap, fits a cubic warp, and prints its leave-one-out error.
 
 Run `tools/build.sh` for the whole pipeline. The first run downloads about 120 MB of OSM data into `./cache`. Use `tools/build.sh --bundle` to re-pack after editing only `src/app.html`.
 
@@ -102,7 +117,7 @@ To deploy:
 What the container does:
 
 - **Port:** listens on `$PORT`, which Cloud Run sets. The default is 8080.
-- **Endpoints:** serves `/` (and `/index.html`) plus `/healthz`. Everything else returns 404, so the data files and build tools are never exposed.
+- **Endpoints:** serves `/` (and `/index.html`), `/assets/plan-1868.jpg` (cached for a week) and `/healthz`. Everything else returns 404, so the data files and build tools are never exposed.
 - **Compression:** sends the page pre-gzipped, about 290 KB instead of 1.4 MB, with `Cache-Control: no-cache` and an ETag, so repeat visits get a `304`.
 - **Security headers:** a Content-Security-Policy that pins the page's one inline script by its SHA-256 hash and allows only jsDelivr (three.js) and Google Fonts. It also sets `nosniff`, a referrer policy, a permissions policy and HSTS.
 - **Base images:** pulled through `mirror.gcr.io`, Google's cache of Docker Hub, to avoid Docker Hub's anonymous pull limits.
@@ -122,6 +137,7 @@ Then open http://localhost:8080.
 ## Sources and licences
 
 - F. M. Dostoevsky, *Crime and Punishment*, trans. Constance Garnett (1914). Public domain, [Project Gutenberg #2554](https://www.gutenberg.org/ebooks/2554). Russian text consulted at [ilibrary.ru](https://ilibrary.ru/text/69/p.1/index.html).
+- The 1868 plan: M. I. Musnitsky, *План С. Петербурга* (St Petersburg: A. Ilyin, 1868), public domain, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Plan_of_Saint-Petersburg_by_Musnitsky,_1868.jpg).
 - Map data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright). `data/map.json` and the geometry embedded in `index.html` are derived from OSM and are available under the [Open Database License](https://opendatacommons.org/licenses/odbl/).
 - Address traditions come from popular guides ([peterburg2.ru](https://peterburg2.ru/articles/marshrut-po-peterburgu-adresa-geroev-romana-prestuplenie-i-nakazanie-231759.html), [Vokrug Sveta](https://www.vokrugsveta.ru/articles/mesto-prestupleniya-i-nakazaniya-izmenit-nelzya-gde-snimali-novyi-serial-po-romanu-fedora-dostoevskogo-id5955567/), KudaGo), not from a critical edition. Treat them accordingly.
 - Rendering: [three.js](https://threejs.org/) r147.

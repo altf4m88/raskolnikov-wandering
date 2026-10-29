@@ -9,8 +9,9 @@ CACHE=cache
 if [[ "${1:-}" != "--bundle" ]]; then
   python3 -I tools/fetch_osm.py "$CACHE"
   python3 -I tools/text.py "$CACHE"
+  python3 -I tools/text_ru.py "$CACHE"
   python3 -I tools/build_map.py "$CACHE" data/map.json            # also writes $CACHE/build/graph.pkl
-  python3 -I tools/build_story.py data/story.json "$CACHE/chapters.json" "$CACHE/build/graph.pkl" data/map.json data/story.built.json
+  python3 -I tools/build_story.py data/story.json "$CACHE/chapters.json" "$CACHE/build/graph.pkl" data/map.json data/story.built.json "$CACHE/ru_chapters.json"
 fi
 python3 -I tools/bundle.py data/map.json data/story.built.json src/app.html "$CACHE/out"
 cp "$CACHE/out/index.html" index.html

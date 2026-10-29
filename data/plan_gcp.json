@@ -1,0 +1,270 @@
+{
+ "plan": "M. I. Musnitsky, Plan of Saint Petersburg, 1868 (Wikimedia Commons, public domain). Pixel coordinates are on the 3840 x 3145 Commons thumbnail.",
+ "note": "Seed points for tools/georef_plan.py. ll: present-day position from OpenStreetMap (street crossings: the shared node; bridges: the middle of the crossing). px: the same point on the plan, picked by eye, good to perhaps 5-10 px (25-45 m). The final warp comes from tie points matched against OSM, not from these.",
+ "points": [
+  {
+   "id": "nevsky_moika",
+   "name": "Nevsky Prospekt over the Moika (Politseisky bridge)",
+   "ll": [
+    59.936188,
+    30.319658
+   ],
+   "px": [
+    2335,
+    1702
+   ]
+  },
+  {
+   "id": "nevsky_gribo",
+   "name": "Nevsky Prospekt over the Catherine Canal (Kazansky bridge)",
+   "ll": [
+    59.93535,
+    30.326401
+   ],
+   "px": [
+    2417,
+    1726
+   ]
+  },
+  {
+   "id": "nevsky_sadovaya",
+   "name": "Nevsky Prospekt × Sadovaya",
+   "ll": [
+    59.934273,
+    30.335109
+   ],
+   "px": [
+    2525,
+    1755
+   ]
+  },
+  {
+   "id": "gorokh_moika",
+   "name": "Gorokhovaya over the Moika (Krasny bridge)",
+   "ll": [
+    59.932979,
+    30.315321
+   ],
+   "px": [
+    2285,
+    1785
+   ]
+  },
+  {
+   "id": "gorokh_gribo",
+   "name": "Gorokhovaya over the Catherine Canal (Kamenny bridge)",
+   "ll": [
+    59.930448,
+    30.319096
+   ],
+   "px": [
+    2331,
+    1841
+   ]
+  },
+  {
+   "id": "gorokh_sadovaya",
+   "name": "Gorokhovaya × Sadovaya",
+   "ll": [
+    59.928525,
+    30.321959
+   ],
+   "px": [
+    2365,
+    1885
+   ]
+  },
+  {
+   "id": "gorokh_fontanka",
+   "name": "Gorokhovaya over the Fontanka (Semyonovsky bridge)",
+   "ll": [
+    59.925137,
+    30.327009
+   ],
+   "px": [
+    2425,
+    1967
+   ]
+  },
+  {
+   "id": "vozn_moika",
+   "name": "Voznesensky over the Moika (Siny bridge)",
+   "ll": [
+    59.931302,
+    30.308513
+   ],
+   "px": [
+    2199,
+    1823
+   ]
+  },
+  {
+   "id": "vozn_gribo",
+   "name": "Voznesensky over the Catherine Canal (Voznesensky bridge)",
+   "ll": [
+    59.926461,
+    30.308165
+   ],
+   "px": [
+    2200,
+    1935
+   ]
+  },
+  {
+   "id": "vozn_fontanka",
+   "name": "Voznesensky over the Fontanka (Izmailovsky bridge)",
+   "ll": [
+    59.919764,
+    30.307891
+   ],
+   "px": [
+    2195,
+    2097
+   ]
+  },
+  {
+   "id": "obukh_fontanka",
+   "name": "Obukhovsky (Moskovsky) Prospekt over the Fontanka",
+   "ll": [
+    59.921644,
+    30.317783
+   ],
+   "px": [
+    2317,
+    2044
+   ]
+  },
+  {
+   "id": "kryukov_moika",
+   "name": "Kryukov Canal meets the Moika",
+   "ll": [
+    59.927694,
+    30.2938
+   ],
+   "px": [
+    2026,
+    1901
+   ]
+  },
+  {
+   "id": "kryukov_gribo",
+   "name": "Kryukov Canal crosses the Catherine Canal",
+   "ll": [
+    59.921134,
+    30.298217
+   ],
+   "px": [
+    2075,
+    2061
+   ]
+  },
+  {
+   "id": "ofits_angl",
+   "name": "Ofitserskaya (Dekabristov) × Angliysky Prospekt",
+   "ll": [
+    59.923841,
+    30.284276
+   ],
+   "px": [
+    1909,
+    1994
+   ]
+  },
+  {
+   "id": "isaac",
+   "name": "St Isaac's Cathedral, centre",
+   "ll": [
+    59.934077,
+    30.306129
+   ],
+   "px": [
+    2170,
+    1745
+   ]
+  },
+  {
+   "id": "univ_kadet",
+   "name": "University Embankment × Kadetskaya Line",
+   "ll": [
+    59.938237,
+    30.294429
+   ],
+   "px": [
+    2019,
+    1656
+   ]
+  },
+  {
+   "id": "bolshoy_kadet",
+   "name": "Bolshoy Prospekt × Kadetskaya Line",
+   "ll": [
+    59.941478,
+    30.290786
+   ],
+   "px": [
+    1984,
+    1580
+   ]
+  },
+  {
+   "id": "sredny_kadet",
+   "name": "Sredny Prospekt × Kadetskaya Line",
+   "ll": [
+    59.945384,
+    30.286267
+   ],
+   "px": [
+    1919,
+    1489
+   ]
+  },
+  {
+   "id": "bolshoy_6",
+   "name": "Bolshoy Prospekt × 6th/7th Lines",
+   "ll": [
+    59.93923,
+    30.283154
+   ],
+   "px": [
+    1890,
+    1642
+   ]
+  },
+  {
+   "id": "bolshoy_15",
+   "name": "Bolshoy Prospekt × 15th Line",
+   "ll": [
+    59.936242,
+    30.273067
+   ],
+   "px": [
+    1768,
+    1706
+   ]
+  },
+  {
+   "id": "peterpaul",
+   "name": "Peter and Paul Cathedral, spire",
+   "ll": [
+    59.950217,
+    30.316539
+   ],
+   "px": [
+    2290,
+    1370
+   ]
+  },
+  {
+   "id": "bronze_horseman",
+   "name": "Bronze Horseman (Peter I monument)",
+   "ll": [
+    59.936389,
+    30.302222
+   ],
+   "px": [
+    2122,
+    1690
+   ]
+  }
+ ]
+}
