@@ -155,17 +155,73 @@ blockquote.ru::before, blockquote.ru::after { content: none; }
 #siberia h2 { margin: 0 0 4px; font: 400 26px/1.05 var(--display); }
 #siberia .arrow { font: 12px var(--mono); color: var(--blood); letter-spacing: .08em; text-transform: uppercase; }
 
-/* ---------- about ---------- */
-#about { position: absolute; inset: 0; background: rgba(34,24,14,.45); display: grid; place-items: center; padding: 16px var(--gutter-r) 16px var(--gutter-l); z-index: 20; }
-#about .sheet { background: var(--paper); max-width: 760px; width: 100%; max-height: 100%; overflow-y: auto; padding: 26px 30px; border: 1px solid var(--ink); position: relative; }
-#about h2 { font: 400 32px/1.05 var(--display); margin: 0 0 6px; }
-#about h3 { font: 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--blood); margin: 22px 0 6px; font-weight: 400; }
-#about p, #about li { max-width: 65ch; }
-#about ul { padding-left: 18px; margin: 6px 0; }
-#about li { margin: 4px 0; }
-#about .close { position: absolute; top: 14px; right: 14px; }
-#about a { color: var(--blood); }
+/* ---------- about, places ---------- */
+.modal { position: absolute; inset: 0; background: rgba(34,24,14,.45); display: grid; place-items: center; padding: 16px var(--gutter-r) 16px var(--gutter-l); z-index: 20; }
+.modal .sheet { background: var(--paper); max-width: 760px; width: 100%; max-height: 100%; overflow-y: auto; padding: 26px 30px; border: 1px solid var(--ink); position: relative; box-sizing: border-box; }
+.modal h2 { font: 400 32px/1.05 var(--display); margin: 0 0 6px; padding-right: 70px; }
+.modal h3 { font: 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--blood); margin: 22px 0 6px; font-weight: 400; }
+.modal p, .modal li { max-width: 65ch; }
+.modal ul { padding-left: 18px; margin: 6px 0; }
+.modal li { margin: 4px 0; }
+.modal .close { position: absolute; top: 14px; right: 14px; }
+.modal a { color: var(--blood); }
 .legend-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 6px 0; }
+
+/* walk stats: the two series are "streets the text gives" and "inferred", the same split as solid and dashed lines on the map */
+:root { --s-text: #8A2A1C; --s-inf: #B86A3C; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 14px; margin: 10px 0 0; }
+.stat { border-top: 3px solid var(--ink); padding-top: 8px; }
+.stat.text { border-top-color: var(--s-text); }
+.stat.inf { border-top: 3px dashed var(--s-inf); }
+.stat.svid { border-top: 3px dashed var(--slate); }
+.stat b { display: block; font: 400 32px/1 var(--display); font-variant-numeric: lining-nums; color: var(--ink); }
+.stat span { display: block; margin-top: 4px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.chart { position: relative; margin: 18px 0 0; }
+.ckey { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 12px/1.3 var(--mono); color: var(--ink-2); margin-bottom: 8px; }
+.ckey span { display: inline-flex; align-items: center; gap: 7px; }
+.ckey i { width: 14px; height: 10px; display: inline-block; border-radius: 1px; }
+.ckey .k-text { background: var(--s-text); }
+.ckey .k-inf { background: repeating-linear-gradient(135deg, var(--s-inf) 0 3px, #D7A989 3px 4.5px); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font: 11px var(--mono); fill: var(--ink-2); }
+.chart text.lab { fill: var(--ink); }
+.chart .grid { stroke: rgba(34,24,14,.12); stroke-width: 1; }
+.chart .base { stroke: var(--ink-3); stroke-width: 1; }
+.chart .col { cursor: pointer; outline: none; }
+.chart .hit { fill: transparent; }
+.chart .col:focus-visible .hit { stroke: var(--blood); stroke-width: 2; }
+.chart.hl .col:not(.on) .seg { opacity: .35; }
+.chart.hl .col.on .hit { fill: rgba(34,24,14,.05); }
+.ctip { position: absolute; z-index: 2; pointer-events: none; background: var(--ink); color: var(--paper); font: 12.5px/1.4 var(--body); padding: 7px 10px; border-radius: 2px; transform: translate(-50%, calc(-100% - 8px)); width: max-content; max-width: 250px; }
+.ctip b { font-weight: 700; }
+.ctip small { display: block; font: 11px/1.4 var(--mono); opacity: .8; margin-top: 2px; }
+.chart figcaption, .cav { font-size: 13.5px; color: var(--ink-2); margin-top: 8px; max-width: 65ch; }
+details.tbl { margin-top: 8px; font-size: 13.5px; }
+details.tbl summary { cursor: pointer; font: 12px var(--mono); color: var(--ink-2); }
+details.tbl table { border-collapse: collapse; margin-top: 8px; width: 100%; font-variant-numeric: tabular-nums; }
+details.tbl th, details.tbl td { text-align: right; padding: 4px 8px; border-bottom: 1px solid var(--rule); }
+details.tbl th:first-child, details.tbl td:first-child, details.tbl th:nth-child(2), details.tbl td:nth-child(2) { text-align: left; }
+details.tbl th { font: 10.5px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 400; }
+details.tbl tfoot td { font-weight: 700; border-bottom: 0; }
+
+/* places index */
+.plist { list-style: none; padding: 0 !important; margin: 8px 0 0 !important; }
+.plist > li { max-width: none; margin: 0; padding: 12px 0; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
+.plist .pn { font: 400 19px/1.2 var(--display); }
+.plist .chip { grid-column: 2; grid-row: 1; }
+.plist .pr { grid-column: 1 / -1; font-style: italic; font-size: 13.5px; color: var(--ink-2); }
+.plist .pa { grid-column: 1 / -1; font: 11.5px/1.4 var(--mono); color: var(--ink-3); }
+.plist .pbk { grid-column: 1 / -1; font-size: 13px; color: var(--ink-2); margin-top: 3px; }
+.plist .scs { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.sc { font: 12px/1.25 var(--body); text-align: left; color: var(--ink); background: rgba(255,255,255,.28); border: 1px solid var(--rule); border-left: 3px solid var(--ink); border-radius: 2px; padding: 4px 8px; cursor: pointer; max-width: 100%; }
+.sc:hover { border-color: var(--ink-3); border-left-color: var(--blood); }
+.sc .when { font: 10.5px var(--mono); color: var(--ink-3); margin-right: 6px; letter-spacing: .03em; }
+.sc.pass { border-left-style: dotted; color: var(--ink-2); }
+.sc.S { border-left-color: var(--slate); }
+.lmlist { padding-left: 0 !important; list-style: none; }
+.lmlist li { max-width: none !important; margin: 0 !important; padding: 8px 0; border-top: 1px solid var(--rule); font-size: 14px; }
+.lmlist b { font: 400 16px/1.2 var(--display); }
+.lmlist i { color: var(--ink-2); }
 
 /* ---------- introduction ---------- */
 #intro { position: absolute; inset: 0; z-index: 15; display: flex; align-items: flex-end; pointer-events: none;
@@ -225,7 +281,9 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
   .tl-legend { display: none; }
   .ibtn { width: 34px; height: 34px; } .ibtn.play { width: 40px; height: 40px; }
   #siberia { right: var(--gutter-r); left: var(--gutter-l); top: 18%; max-width: none; }
-  #about .sheet { padding: 22px 18px; }
+  .modal .sheet { padding: 22px 18px; }
+  .modal h2 { font-size: 27px; }
+  .stat b { font-size: 26px; }
   #intro { padding-top: calc(env(safe-area-inset-top, 0px) + 96px); background: linear-gradient(to top, rgba(236,223,184,.95) 0%, rgba(236,223,184,.5) 45%, rgba(236,223,184,0) 75%); }
   .intro-card { padding: 18px 18px 14px; }
   .slide p { font-size: 15px; }
@@ -250,6 +308,7 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
     <button class="tbtn" id="t-all" aria-pressed="false" title="Show every walk in the novel, faintly"><span class="sw"></span>All walks</button>
     <button class="tbtn svid" id="t-svid" aria-pressed="false" title="Add Svidrigailov's last night to the timeline"><span class="sw"></span>Svidrigailov's night</button>
     <button class="tbtn" id="t-lbl" aria-pressed="true" title="Place names">Labels</button>
+    <button class="tbtn" id="t-places" aria-pressed="false" title="Every place in the novel, and how far he walks">Places &amp; distances</button>
     <button class="tbtn" id="t-about" aria-pressed="false">About this map</button>
   </nav>
 
@@ -302,7 +361,32 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
   </footer>
   <div id="tip" hidden></div>
 
-  <div id="about" hidden role="dialog" aria-modal="true" aria-labelledby="about-h">
+  <div id="places" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="places-h">
+    <div class="sheet">
+      <button class="tbtn close" id="places-close">Close</button>
+      <h2 id="places-h">Places &amp; distances</h2>
+
+      <h3>How far he walks</h3>
+      <div class="stats" id="pd-stats"></div>
+      <figure class="chart" id="pd-chart">
+        <div class="ckey" aria-hidden="true"><span><i class="k-text"></i>streets the text gives</span><span><i class="k-inf"></i>route inferred</span></div>
+        <div id="pd-svg"></div>
+        <div class="ctip" id="pd-tip" hidden></div>
+        <figcaption>Kilometres Raskolnikov walks on each day of the action. Hover or tap a day for its numbers; click it, or tap it again, to go there.</figcaption>
+      </figure>
+      <details class="tbl"><summary>Show the numbers as a table</summary><div id="pd-table"></div></details>
+      <p class="cav">Treat every figure as a floor. A walk is measured along today's streets from one pin to the next, by the streets the text names or else the shortest plausible way, and the novel often has him wander for hours without naming a street. "Inferred" does not mean the walk is invented. He certainly got home from the Krestovsky bushes; the text just doesn't say by which streets.</p>
+
+      <h3>Places, in order of appearance</h3>
+      <p>Click a scene to go to it. Dotted scenes only pass through the place on the way somewhere else.</p>
+      <ul class="plist" id="pd-places"></ul>
+
+      <h3>Landmarks on the map</h3>
+      <ul class="lmlist" id="pd-lm"></ul>
+    </div>
+  </div>
+
+  <div id="about" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="about-h">
     <div class="sheet">
       <button class="tbtn close" id="about-close">Close</button>
       <h2 id="about-h">About this map</h2>
@@ -1169,14 +1253,175 @@ $('t-svid').onclick = function () {
   if (cur.who === 'S' && !showSvid) select('e42'); else { markTimeline(); styleRoutes(); }
 };
 $('t-lbl').onclick = function () { labelsOn = !labelsOn; this.setAttribute('aria-pressed', labelsOn); };
-function openAbout(open) { $('about').hidden = !open; $('t-about').setAttribute('aria-pressed', open); if (open) $('about-close').focus(); }
-$('t-about').onclick = function () { openAbout(true); };
-$('about-close').onclick = function () { openAbout(false); };
-$('about').addEventListener('click', function (ev) { if (ev.target === this) openAbout(false); });
+// the two sheets, About and Places; focus returns to the button that opened them
+function openModal() { return ['about', 'places'].filter(function (id) { return !$(id).hidden; })[0]; }
+function showModal(id, open) {
+  $(id).hidden = !open; $('t-' + id).setAttribute('aria-pressed', open);
+  if (open) { $(id + '-close').focus(); $(id).querySelector('.sheet').scrollTop = 0; } else $('t-' + id).focus({ preventScroll: true });
+}
+function openAbout(open) { showModal('about', open); }
+['about', 'places'].forEach(function (id) {
+  $('t-' + id).onclick = function () { if (id === 'places') { buildPlaces(); buildDayChart(); } showModal(id, true); };
+  $(id + '-close').onclick = function () { showModal(id, false); };
+  $(id).addEventListener('click', function (ev) { if (ev.target === this) showModal(id, false); });
+});
+
+// ---------- places & distances ----------
+// Computed from the scenes in the page, so the numbers can't drift from the map.
+var SVGNS = 'http://www.w3.org/2000/svg';
+function km(m) { return (m / 1000).toFixed(1); }
+function walkTotals(evs) {
+  var t = { text: 0, inf: 0, n: 0 };
+  evs.forEach(function (e) { if (!e.len) return; if (e.rc === 'inferred') t.inf += e.len; else t.text += e.len; t.n++; });
+  t.all = t.text + t.inf; return t;
+}
+function sceneBtn(e, pass) {
+  var b = document.createElement('button'), d = dayOf(e);
+  b.className = 'sc ' + e.who + (pass ? ' pass' : '');
+  b.innerHTML = '<span class="when"></span><span></span>';
+  b.firstChild.textContent = (e.who === 'S' ? 'Svidrigailov · ' : '') + (e.day === 99 ? 'Epilogue' : d.label + ' · ' + e.t) + (pass ? ' · passing' : '');
+  b.lastChild.textContent = typo(e.title);
+  b.onclick = function () { showModal('places', false); stop(); select(e.id); };
+  return b;
+}
+var placesBuilt = false;
+function buildPlaces() {
+  if (placesBuilt) return; placesBuilt = true;
+  var R = EV.filter(function (e) { return e.who === 'R'; }), T = walkTotals(R), TS = walkTotals(EV.filter(function (e) { return e.who === 'S'; }));
+  var pct = Math.round(T.text / T.all * 100);
+  $('pd-stats').innerHTML = '';
+  [['', km(T.all) + ' km', 'Raskolnikov walks in fourteen days, in ' + T.n + ' walks'],
+   ['text', km(T.text) + ' km', 'on streets the text gives (' + pct + '%)'],
+   ['inf', km(T.inf) + ' km', 'on routes I inferred (' + (100 - pct) + '%)'],
+   ['svid', km(TS.all) + ' km', 'Svidrigailov’s last night, not counted here']].forEach(function (s) {
+    var d = document.createElement('div'); d.className = 'stat ' + s[0];
+    d.innerHTML = '<b></b><span></span>'; d.firstChild.textContent = s[1]; d.lastChild.textContent = s[2];
+    $('pd-stats').appendChild(d);
+  });
+  // places, in the order the story first reaches them (start, waypoints, destination)
+  var order = [], arrive = {}, pass = {};
+  EV.slice().sort(function (a, b) { return evKey(a) - evKey(b); }).forEach(function (e) {
+    var touched = [e.from].concat((e.via || []).filter(function (v) { return typeof v === 'string'; }));
+    touched.forEach(function (k) { if (k && LOC[k] && k !== e.loc) { if (order.indexOf(k) < 0) order.push(k); (pass[k] = pass[k] || []).push(e); } });
+    if (order.indexOf(e.loc) < 0) order.push(e.loc);
+    (arrive[e.loc] = arrive[e.loc] || []).push(e);
+  });
+  Object.keys(LOC).forEach(function (k) { if (order.indexOf(k) < 0) order.push(k); });
+  var ul = $('pd-places'); ul.innerHTML = '';
+  order.forEach(function (k) {
+    var l = LOC[k], li = document.createElement('li');
+    li.innerHTML = '<span class="pn"></span><span class="chip"></span><span class="pr" lang="ru"></span><span class="pa"></span>';
+    li.querySelector('.pn').textContent = l.name;
+    var ch = li.querySelector('.chip'); ch.textContent = CONF_TXT[l.conf]; ch.classList.add(l.conf);
+    li.querySelector('.pr').textContent = l.ru; li.querySelector('.pa').textContent = l.addr;
+    if (l.book) {
+      var bk = document.createElement('div'); bk.className = 'pbk'; bk.title = S.meta.edition;
+      bk.innerHTML = '<span class="bk"></span><span></span>';
+      bk.firstChild.textContent = 'book map ' + l.book.verdict; bk.firstChild.classList.add(l.book.verdict);
+      bk.lastChild.textContent = (l.book.n ? 'No. ' + l.book.n + ': ' : '') + typo(l.book.text);
+      li.appendChild(bk);
+    }
+    var scs = document.createElement('div'); scs.className = 'scs';
+    (arrive[k] || []).forEach(function (e) { scs.appendChild(sceneBtn(e, false)); });
+    (pass[k] || []).forEach(function (e) { scs.appendChild(sceneBtn(e, true)); });
+    li.appendChild(scs); ul.appendChild(li);
+  });
+  var lm = $('pd-lm'); lm.innerHTML = '';
+  (S.landmarks || []).forEach(function (m) {
+    var li = document.createElement('li'); li.innerHTML = '<b></b><br><i lang="ru"></i><br><span></span>';
+    li.querySelector('b').textContent = m.name; li.querySelector('i').textContent = m.ru; li.querySelector('span').textContent = m.note;
+    lm.appendChild(li);
+  });
+}
+// Stacked columns per day: text-given at the base, inferred above, 2px gap, rounded top.
+function buildDayChart() {
+  var R = EV.filter(function (e) { return e.who === 'R'; });
+  var groups = DAYS.filter(function (d) { return d.d !== 99; }).map(function (d) {
+    var t = walkTotals(R.filter(function (e) { return dayOf(e).d === d.d; }));
+    t.d = d; return t;
+  });
+  // a narrower drawing on phones, so the axis text stays legible when the SVG scales down
+  var W = window.innerWidth < 600 ? 360 : 640, H = 230, ml = 40, mr = 6, mt = 22, mb = 30, pw = W - ml - mr, ph = H - mt - mb;
+  var top = Math.max(5, Math.ceil(Math.max.apply(null, groups.map(function (g) { return g.all; })) / 5000) * 5);
+  var y = function (m) { return mt + ph - m / (top * 1000) * ph; };
+  var pitch = pw / groups.length, bw = Math.min(24, pitch * 0.5);
+  function el(n, a, txt) { var x = document.createElementNS(SVGNS, n); for (var k in a) x.setAttribute(k, a[k]); if (txt != null) x.textContent = txt; return x; }
+  var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Kilometres walked per day, split into streets the text gives and inferred routes. The same numbers are in the table below.' });
+  var defs = el('defs'), pat = el('pattern', { id: 'pd-hatch', width: 5, height: 5, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' });
+  pat.appendChild(el('rect', { width: 5, height: 5, fill: '#B86A3C' }));
+  pat.appendChild(el('line', { x1: 0, y1: 0, x2: 0, y2: 5, stroke: '#ECDFB8', 'stroke-opacity': 0.5, 'stroke-width': 1.6 }));
+  defs.appendChild(pat); svg.appendChild(defs);
+  for (var v = 0; v <= top; v += 5) {
+    svg.appendChild(el('line', { x1: ml, x2: W - mr, y1: y(v * 1000), y2: y(v * 1000), 'class': v ? 'grid' : 'base' }));
+    svg.appendChild(el('text', { x: ml - 8, y: y(v * 1000) + 4, 'text-anchor': 'end' }, v === top ? v + ' km' : v));
+  }
+  // direct labels only on the two longest days; the rest are in the tooltip and the table
+  var big = groups.slice().sort(function (a, b) { return b.all - a.all; }).slice(0, 2);
+  function topPath(x, y0, w, h, r) {
+    r = Math.min(r, h, w / 2);
+    return 'M' + x + ',' + (y0 + h) + 'V' + (y0 + r) + 'Q' + x + ',' + y0 + ' ' + (x + r) + ',' + y0 + 'H' + (x + w - r) + 'Q' + (x + w) + ',' + y0 + ' ' + (x + w) + ',' + (y0 + r) + 'V' + (y0 + h) + 'Z';
+  }
+  var tipEl = $('pd-tip'), fig = $('pd-chart'), touch = false, hl = null;
+  fig.classList.remove('hl'); tipEl.hidden = true;
+  function show(g, col) {
+    hl = g; fig.classList.add('hl');
+    svg.querySelectorAll('.col').forEach(function (c) { c.classList.toggle('on', c === col); });
+    tipEl.innerHTML = '<b></b><br><span></span><small></small>';
+    tipEl.firstChild.textContent = g.d.label + ' · ' + g.d.name;
+    tipEl.children[2].textContent = g.all ? km(g.all) + ' km walked: ' + km(g.text) + ' on streets the text gives, ' + km(g.inf) + ' inferred' : 'He doesn’t leave his room.';
+    tipEl.lastChild.textContent = (g.n ? g.n + (g.n > 1 ? ' walks' : ' walk') + ' · ' : '') + (touch ? 'tap again to go there' : 'click to go there');
+    tipEl.hidden = false;
+    var sr = svg.getBoundingClientRect(), fr = fig.getBoundingClientRect(), s = sr.width / W;
+    var cx = sr.left - fr.left + (ml + pitch * groups.indexOf(g) + pitch / 2) * s;
+    tipEl.style.left = Math.min(Math.max(cx, 125), fr.width - 125) + 'px';
+    tipEl.style.top = (sr.top - fr.top + y(g.all) * s) + 'px';
+  }
+  function hide() { hl = null; fig.classList.remove('hl'); tipEl.hidden = true; }
+  function go(g) { hide(); showModal('places', false); stop(); routeHash('day-' + g.d.d); }
+  groups.forEach(function (g, i) {
+    var cx = ml + pitch * i + pitch / 2, x = cx - bw / 2;
+    var col = el('g', { 'class': 'col', tabindex: 0, role: 'button', 'aria-label': g.d.label + ', ' + g.d.name + ': ' + km(g.all) + ' km, ' + km(g.text) + ' on streets the text gives, ' + km(g.inf) + ' inferred. Go to this day.' });
+    col.appendChild(el('rect', { 'class': 'hit', x: ml + pitch * i + 1, y: mt - 18, width: pitch - 2, height: ph + 18 + mb, rx: 2 }));
+    var yb = y(0), yt = y(g.text), ya = y(g.all);
+    if (g.text > 0) {
+      var h1 = Math.max(1, yb - yt);
+      col.appendChild(g.inf > 0 ? el('rect', { 'class': 'seg', x: x, y: yb - h1, width: bw, height: h1, fill: '#8A2A1C' }) : el('path', { 'class': 'seg', d: topPath(x, yb - h1, bw, h1, 4), fill: '#8A2A1C' }));
+    }
+    if (g.inf > 0) {
+      var base = g.text > 0 ? Math.min(yt, yb - 1) - 2 : yb, h2 = Math.max(1, base - ya);
+      col.appendChild(el('path', { 'class': 'seg', d: topPath(x, base - h2, bw, h2, 4), fill: 'url(#pd-hatch)' }));
+    }
+    if (!g.all) col.appendChild(el('text', { x: cx, y: yb - 6, 'text-anchor': 'middle' }, 'in bed'));
+    if (big.indexOf(g) >= 0) col.appendChild(el('text', { 'class': 'lab', x: cx, y: ya - 7, 'text-anchor': 'middle' }, km(g.all) + ' km'));
+    col.appendChild(el('text', { x: cx, y: H - mb + 17, 'text-anchor': 'middle' }, g.d.label.replace(/^Days? /, '')));
+    col.addEventListener('pointerdown', function (ev) { touch = ev.pointerType !== 'mouse'; });
+    col.addEventListener('mouseenter', function () { if (!touch) show(g, col); });
+    col.addEventListener('mouseleave', function () { if (!touch) hide(); });
+    col.addEventListener('focus', function () { if (col.matches(':focus-visible')) show(g, col); });
+    col.addEventListener('blur', hide);
+    col.addEventListener('click', function () { if (touch && hl !== g) { show(g, col); return; } go(g); });
+    col.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ev.stopPropagation(); go(g); } });
+    svg.appendChild(col);
+  });
+  svg.appendChild(el('text', { x: ml, y: H - 1, 'text-anchor': 'start' }, 'day'));
+  $('pd-svg').innerHTML = ''; $('pd-svg').appendChild(svg);
+  // the same numbers as a table
+  var rows = groups.map(function (g) { return [g.d.label, g.d.name, km(g.text), km(g.inf), km(g.all), g.n]; });
+  var all = walkTotals(R);
+  var tb = '<table><thead><tr><th>Day</th><th></th><th>Text gives</th><th>Inferred</th><th>Total km</th><th>Walks</th></tr></thead><tbody>';
+  rows.forEach(function () { tb += '<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>'; });
+  tb += '</tbody><tfoot><tr><td>All</td><td></td><td></td><td></td><td></td><td></td></tr></tfoot></table>';
+  $('pd-table').innerHTML = tb;
+  var trs = $('pd-table').querySelectorAll('tr');
+  rows.concat([['All', '', km(all.text), km(all.inf), km(all.all), all.n]]).forEach(function (r, i) {
+    var tds = trs[i + 1].children; r.forEach(function (v, j) { tds[j].textContent = v; });
+  });
+}
 var sheetOpen = false;
 $('handle').onclick = function () { sheetOpen = !sheetOpen; document.documentElement.style.setProperty('--sheet-h', sheetOpen ? '62vh' : '190px'); chromeCache = null; };
 window.addEventListener('keydown', function (ev) {
-  if (!$('about').hidden) { if (ev.key === 'Escape') openAbout(false); return; }
+  var mod = openModal();
+  if (mod) { if (ev.key === 'Escape') showModal(mod, false); return; }
   if (intro) {
     if (ev.key === 'Escape') { endIntro(false); ev.preventDefault(); }
     else if (ev.key === 'ArrowRight' && intro.k < 2) { showSlide(intro.k + 1); ev.preventDefault(); }

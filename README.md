@@ -14,6 +14,7 @@ Open `index.html` in a browser. It is a single file. It needs a network connecti
 - **Svidrigailov's last night** as an optional second track.
 - **A confidence chip on every place:** *textual* (named in the novel), *traditional* (an initial such as "K—— Bridge" that local tradition has resolved), or *conjectural* (my own guess, with the reasoning given).
 - **Measurements that test the text,** for example the famous "seven hundred and thirty" paces from the garret to the pawnbroker's.
+- **Places & distances:** every place in order of appearance, with each scene set there, and how far he walks. That is about 48.5 km over the fourteen days, 18.0 km of it on streets the text gives, with a per-day chart and table. Every figure is a floor: walks run pin to pin along today's streets, and the novel's hours of aimless wandering can't be measured.
 
 On a first visit a short introduction plays (skip it any time, or press Esc); **About this map → Replay the introduction** brings it back. Controls: drag to pan, right-drag or two fingers to rotate, scroll or pinch to zoom. ←/→ step through scenes, space plays. At 1× each scene stays on screen about as long as it takes to read its card (roughly 190 words a minute), and the walk is stretched to match; ½× and 2× are on the speed button. Links like `index.html#e13` or `#day-9` open a given scene or day.
 
