@@ -19,4 +19,6 @@ FROM mirror.gcr.io/nginxinc/nginx-unprivileged:1.30-alpine
 ENV PORT=8080
 COPY --from=build /out/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /out/index.html /out/index.html.gz /usr/share/nginx/html/
+# the 1868 plan overlay is a plain JPEG, fetched only when someone switches it on
+COPY assets/plan-1868.jpg /usr/share/nginx/html/assets/
 EXPOSE 8080

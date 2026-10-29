@@ -58,6 +58,10 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 .tbtn.svid .sw { background: repeating-linear-gradient(90deg, var(--slate) 0 4px, transparent 4px 7px); height: 3px; }
 .tbtn.svid[aria-pressed="true"] .sw { background: repeating-linear-gradient(90deg, #b9d0df 0 4px, transparent 4px 7px); }
 :focus-visible { outline: 2px solid var(--blood); outline-offset: 2px; }
+.planctl { display: inline-flex; align-items: center; gap: 6px; }
+.planctl input { width: 92px; accent-color: var(--ink); }
+.tbtn.busy { cursor: progress; opacity: .7; }
+#toast { position: absolute; left: var(--gutter-l); bottom: calc(var(--tl-h) + 58px + env(safe-area-inset-bottom, 0px)); max-width: min(440px, calc(100% - var(--panel-w) - 64px)); background: var(--ink); color: var(--paper); font-size: 13.5px; line-height: 1.4; padding: 9px 12px; border-radius: 2px; z-index: 6; }
 
 /* ---------- scene card ---------- */
 #panel { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: var(--gutter-r); width: var(--panel-w); bottom: calc(var(--tl-h) + 26px + env(safe-area-inset-bottom, 0px)); background: var(--paper-glass); border: 1px solid var(--rule); box-shadow: 0 10px 40px -18px rgba(34,24,14,.55); display: flex; flex-direction: column; min-height: 0; }
@@ -263,6 +267,7 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
   .readout { font-size: 11px; margin-top: 6px; }
   .readout span { padding: 3px 6px; }
   #tools { top: auto; right: var(--gutter-r); left: var(--gutter-l); bottom: calc(var(--tl-h) + 12px + env(safe-area-inset-bottom, 0px) + var(--sheet-h, 190px)); justify-content: flex-start; max-width: none; }
+  #toast { top: calc(env(safe-area-inset-top, 0px) + 96px); bottom: auto; right: var(--gutter-r); max-width: none; }
   .tbtn { padding: 6px 8px; font-size: 11px; }
   #panel { top: auto; left: 0; right: 0; width: auto; bottom: calc(var(--tl-h) + 6px + env(safe-area-inset-bottom, 0px)); height: var(--sheet-h, 190px); border-left: 0; border-right: 0; }
   #panel .scroll { padding: 4px var(--gutter-r) 14px var(--gutter-l); }
@@ -301,9 +306,11 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
     <button class="tbtn" id="t-all" aria-pressed="false" title="Show every walk in the novel, faintly"><span class="sw"></span>All walks</button>
     <button class="tbtn svid" id="t-svid" aria-pressed="false" title="Add Svidrigailov's last night to the timeline"><span class="sw"></span>Svidrigailov's night</button>
     <button class="tbtn" id="t-lbl" aria-pressed="true" title="Place names">Labels</button>
+    <span class="planctl"><button class="tbtn" id="t-plan" aria-pressed="false" title="Lay Musnitsky's 1868 plan of the city over the map">1868 plan</button><input type="range" id="plan-op" min="25" max="100" step="5" value="100" aria-label="Opacity of the 1868 plan" title="Fade the 1868 plan to compare it with today's water and streets" hidden></span>
     <button class="tbtn" id="t-places" aria-pressed="false" title="Every place in the novel, and how far he walks">Places &amp; distances</button>
     <button class="tbtn" id="t-about" aria-pressed="false">About this map</button>
   </nav>
+  <div id="toast" role="status" hidden></div>
 
   <aside id="panel" aria-label="Scene">
     <div class="prog" id="prog" hidden title="Time left on this scene; playback waits long enough to read the card"><i id="prog-i"></i></div>
@@ -408,6 +415,15 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
         <li><b>The 730 paces.</b> At an ordinary 0.71 m pace, 730 paces is about 520 m. The text sends him "towards K. bridge", and that route measures about 1.1 km. Even the shortest street route today is about 0.7 km. Either Raskolnikov took enormous strides, or the number is a novelist's exactness, not a surveyor's.</li>
       </ul>
 
+      <h3>The 1868 plan</h3>
+      <p>The <b>1868 plan</b> button lays M. I. Musnitsky's <i>Plan of St Petersburg</i> over the map: engraved by Makhotin, printed by A. Ilyin's cartographic works in 1868, public domain, from <a href="https://commons.wikimedia.org/wiki/File:Plan_of_Saint-Petersburg_by_Musnitsky,_1868.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>. Its title says it was compiled from Schubert's plan of 1828, the Navy's 1864 charts of the Neva, and Musnitsky's own surveys of 1867–68. That is two or three years after the novel's summer, the nearest engraved plan I found.</p>
+      <ul>
+        <li><b>How it was fitted.</b> I picked 22 crossings and bridges by eye for a first fit. Then about 150 patches of the plan's streets and water were matched against OpenStreetMap, and a cubic warp was fitted through them. A patch left out of the fit lands about 9 m from where it should (RMS; 12 m for the worst tenth), against the plan's engraving at about 4.6 m per pixel.</li>
+        <li><b>What that error means.</b> The plan can settle which street, bank or block a place is on, not which house. Where the shore has moved since, as on Vasilievsky's western end and at the Strelka, the old water edge really is elsewhere; that is history, not error.</li>
+        <li><b>Its resolution.</b> Wikimedia serves the plan to scripts at 3,840 px wide, a quarter of the original scan, so it turns soft when you zoom in close.</li>
+        <li>The slider fades it so today's water and pins show through. Opened as a file from disk, the plan can't load, because browsers block it; use the deployed site or a local web server.</li>
+      </ul>
+
       <h3>Checked against a printed edition</h3>
       <p>The Wordsworth Classics edition (Garnett translation, introduction by Keith Carabine) prints a hand-drawn map, "The St Petersburg of <i>Crime and Punishment</i>", with eight numbered sites. Each place it marks says on its scene card whether that edition agrees.</p>
       <ul>
@@ -435,6 +451,7 @@ body.intro-on .mast .readout, body.intro-on #panel, body.intro-on #tools, body.i
       <ul>
         <li>F. M. Dostoevsky, <i>Crime and Punishment</i>, trans. Constance Garnett (1914), <a href="https://www.gutenberg.org/ebooks/2554" target="_blank" rel="noopener">Project Gutenberg #2554</a>. Russian text: <a href="https://ilibrary.ru/text/69/p.1/index.html" target="_blank" rel="noopener">ilibrary.ru</a>.</li>
         <li>Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, ODbL.</li>
+        <li>1868 plan: M. I. Musnitsky, <i>План С. Петербурга</i> (St Petersburg: A. Ilyin, 1868), public domain, via <a href="https://commons.wikimedia.org/wiki/File:Plan_of_Saint-Petersburg_by_Musnitsky,_1868.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>.</li>
         <li>Address traditions: <a href="https://peterburg2.ru/articles/marshrut-po-peterburgu-adresa-geroev-romana-prestuplenie-i-nakazanie-231759.html" target="_blank" rel="noopener">peterburg2.ru</a>, <a href="https://www.vokrugsveta.ru/articles/mesto-prestupleniya-i-nakazaniya-izmenit-nelzya-gde-snimali-novyi-serial-po-romanu-fedora-dostoevskogo-id5955567/" target="_blank" rel="noopener">Vokrug Sveta</a>, and the KudaGo Dostoevsky list. All are popular guides; none is a critical edition.</li>
         <li>Rendering: three.js r147.</li>
       </ul>
@@ -1246,6 +1263,42 @@ $('t-svid').onclick = function () {
   if (cur.who === 'S' && !showSvid) select('e42'); else { markTimeline(); styleRoutes(); }
 };
 $('t-lbl').onclick = function () { labelsOn = !labelsOn; this.setAttribute('aria-pressed', labelsOn); };
+
+// ---------- the 1868 plan ----------
+// Musnitsky's plan, warped offline onto this map's extent by tools/georef_plan.py. It is a
+// separate image, fetched the first time it is switched on. While it shows, today's buildings,
+// parks and street lines step aside; the routes, pins and the three landmark models stay.
+var PLAN_URL = 'assets/plan-1868.jpg', planMesh = null, planOn = false, planLoading = false;
+function toast(msg, ms) {
+  var t = $('toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.h); toast.h = setTimeout(function () { t.hidden = true; }, ms || 6000);
+}
+function setPlan(on) {
+  planOn = on; $('t-plan').setAttribute('aria-pressed', on); $('plan-op').hidden = !on;
+  planMesh.visible = on; bldMesh.visible = !on; streetLines.visible = !on; parkMesh.visible = !on; // parks sit too close to the plane and show through
+  chromeCache = null;
+}
+$('t-plan').onclick = function () {
+  if (planMesh) { setPlan(!planOn); return; }
+  if (planLoading) return;
+  // browsers refuse a WebGL texture from a page opened straight from disk
+  if (location.protocol === 'file:') { toast('The 1868 plan is a separate image, and browsers won’t put it into a 3D view opened from a file on disk. Serve the folder instead (python3 -m http.server) or use the deployed site.', 10000); return; }
+  var btn = this; planLoading = true; btn.classList.add('busy'); btn.textContent = 'Loading 1868 plan…';
+  new THREE.TextureLoader().load(PLAN_URL, function (tex) {
+    planLoading = false; btn.classList.remove('busy'); btn.textContent = '1868 plan';
+    tex.encoding = THREE.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    var g = new THREE.PlaneGeometry(EXT[2] - EXT[0], EXT[3] - EXT[1]); g.rotateX(-Math.PI / 2);
+    planMesh = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ map: tex, transparent: true, opacity: $('plan-op').value / 100, depthWrite: false }));
+    planMesh.position.set((EXT[0] + EXT[2]) / 2, 0.8, -(EXT[1] + EXT[3]) / 2);
+    planMesh.renderOrder = -1; scene.add(planMesh); // first of the transparent pass, so pin rings and routes draw over it
+    setPlan(true);
+  }, undefined, function () {
+    planLoading = false; btn.classList.remove('busy'); btn.textContent = '1868 plan';
+    toast('The 1868 plan could not be loaded.');
+  });
+};
+$('plan-op').oninput = function () { if (planMesh) planMesh.material.opacity = this.value / 100; };
+
 // the two sheets, About and Places; focus returns to the button that opened them
 function openModal() { return ['about', 'places'].filter(function (id) { return !$(id).hidden; })[0]; }
 function showModal(id, open) {

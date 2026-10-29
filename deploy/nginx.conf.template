@@ -31,6 +31,11 @@ server {
         expires -1;
     }
 
+    # the 1868 plan overlay: a JPEG, so no gzip. Browsers keep it a week; rename it if the warp changes
+    location = /assets/plan-1868.jpg {
+        expires 7d;
+    }
+
     location = /healthz {
         access_log   off;
         default_type text/plain;
